@@ -1,8 +1,6 @@
-/controller/
+/view/
+/mqtt/
+/util/
 /dao/
 /dto/
-/mqtt/
-/service/
 /sql/
-/util/
-/view/
