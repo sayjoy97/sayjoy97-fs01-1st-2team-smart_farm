@@ -13,7 +13,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 	@Override
 	public int register(MemberDTO user) {
-		String sql = "insert into members values(null,?,?,?,?,?,now())";
+		String sql = "insert into users values(null,?,?,?,?,?,?)";
 		Connection con = null;
 		PreparedStatement ptmt = null;
 		int result = 0;
@@ -21,10 +21,11 @@ public class MemberDAOImpl implements MemberDAO {
 			con = DBUtil.getConnect();
 			ptmt = con.prepareStatement(sql);
 			ptmt.setString(1, user.getUserId());
-			ptmt.setString(2, user.getPass());
-			ptmt.setString(3, user.getName());
-			ptmt.setString(4, user.getEmail());
-			ptmt.setString(5, user.getAddress());
+			ptmt.setString(2, user.getPassword());
+			ptmt.setString(3, user.getEmail());
+			ptmt.setString(4, user.getName());
+			ptmt.setString(5, user.getSecurityQuestion());
+			ptmt.setString(6, user.getSecurityAnswer());
 			result = ptmt.executeUpdate();
 			
 		} catch (SQLException e) {
@@ -33,28 +34,26 @@ public class MemberDAOImpl implements MemberDAO {
 			DBUtil.close(null, ptmt, con);
 		}
 		return result;
-		
 	}
 
 	@Override
-	public MemberDTO login(String id, String pass) {
+	public MemberDTO login(String userId, String password) {
 		Connection con = null;
 		PreparedStatement ptmt =null;
 		ResultSet rs = null;
 		MemberDTO loginSuccessUser = null;
-		String sql = "select * from members where user_id=? and pass=?";
+		String sql = "select * from users where user_id=? and password=?";
 		try {
 			con = DBUtil.getConnect();
 			ptmt =  con.prepareStatement(sql);
-			ptmt.setString(1, id);
-			ptmt.setString(2, pass);
+			ptmt.setString(1, userId);
+			ptmt.setString(2, password);
 			rs =  ptmt.executeQuery();
 			if(rs.next()) {
-				loginSuccessUser = new MemberDTO(rs.getInt("id"), 
-						rs.getString("user_id"),rs.getString("pass"),
-						rs.getString("name"), rs.getString("email")
-						,rs.getString(6),rs.getTimestamp(7));
-				
+				loginSuccessUser = new MemberDTO(rs.getInt("user_uid"), 
+						rs.getString("user_id"),rs.getString("password"),
+						rs.getString("email"), rs.getString("name")
+						,rs.getString("security_question"),rs.getString("security_answer"));
 			}
 		}  catch (SQLException e) {
 			e.printStackTrace();
@@ -63,5 +62,4 @@ public class MemberDAOImpl implements MemberDAO {
 		}
 		return loginSuccessUser;
 	}
-
 }

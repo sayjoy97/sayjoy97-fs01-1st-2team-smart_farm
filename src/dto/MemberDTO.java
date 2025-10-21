@@ -4,53 +4,54 @@ import java.sql.Timestamp;
 
 public class MemberDTO {
 
-    private int id;             // 회원 고유 번호 (PK)
-    private String userId;      // 아이디
-    private String pass;    // 비밀번호
-    private String name;    // 성명
-    private String email;       // 이메일
-    private String address;     // 주소
-    private Timestamp createdAt;  // 가입일
+    private int userUid;
+    private String userId;
+    private String password;
+    private String email;
+    private String name;
+    private String securityQuestion;
+    private String securityAnswer;
 
     // 기본 생성자
     public MemberDTO() {
     }
-    public MemberDTO(int id, String userId, String pass, String name, String email, String address,
-			Timestamp createdAt) {
+    public MemberDTO(int userUid, String userId, String password, String email, String name, String securityQuestion,
+    		String securityAnswer) {
 		super();
-		this.id = id;
+		this.userUid = userUid;
 		this.userId = userId;
-		this.pass = pass;
-		this.name = name;
+		this.password = password;
 		this.email = email;
-		this.address = address;
-		this.createdAt = createdAt;
+		this.name = name;
+		this.securityQuestion = securityQuestion;
+		this.securityAnswer = securityAnswer;
 	}
-
-   
+    
     // --- Getter and Setter ---
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-	public String getPass() {
-		return pass;
+    
+	public int getUserUid() {
+		return userUid;
 	}
-	public void setPass(String pass) {
-		this.pass = pass;
+	public void setUserUid(int userUid) {
+		this.userUid = userUid;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getName() {
 		return name;
@@ -58,33 +59,22 @@ public class MemberDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+	public String getSecurityQuestion() {
+		return securityQuestion;
+	}
+	public void setSecurityQuestion(String securityQuestion) {
+		this.securityQuestion = securityQuestion;
+	}
+	public String getSecurityAnswer() {
+		return securityAnswer;
+	}
+	public void setSecurityAnswer(String securityAnswer) {
+		this.securityAnswer = securityAnswer;
+	}
 	@Override
 	public String toString() {
-		return "MemberDTO [id=" + id + ", userId=" + userId + ", pass=" + pass + ", name=" + name + ", email=" + email
-				+ ", address=" + address + ", createdAt=" + createdAt + "]";
+		return "MemberDTO [userUid=" + userUid + ", userId=" + userId + ", password=" + password + ", email=" + email
+				+ ", name=" + name + ", securityQuestion=" + securityQuestion + ", securityAnswer=" + securityAnswer
+				+ "]";
 	}
-
 }

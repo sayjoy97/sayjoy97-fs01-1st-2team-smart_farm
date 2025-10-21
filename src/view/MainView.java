@@ -53,7 +53,7 @@ public class MainView {
             System.out.print("  [필수] 비밀번호 확인: ");
             String passwordConfirm = scanner.nextLine();
             if (password.equals(passwordConfirm)) {
-                newMember.setPass(passwordConfirm);
+                newMember.setPassword(passwordConfirm);
                 break;
             } else {
                 System.out.println("\n  (!) 비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
@@ -64,8 +64,10 @@ public class MainView {
         newMember.setName(scanner.nextLine());
         System.out.print("  [필수] 이메일: ");
         newMember.setEmail(scanner.nextLine());
-        System.out.print("  [선택] 주소: ");
-        newMember.setAddress(scanner.nextLine());
+        System.out.print("  [선택] 본인 확인 질문: ");
+        newMember.setSecurityQuestion(scanner.nextLine());
+        System.out.print("  [선택] 본인 확인 답변: ");
+        newMember.setSecurityAnswer(scanner.nextLine());
         
         System.out.println("\n--------------------------------------------------");
      
