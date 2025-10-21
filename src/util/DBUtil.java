@@ -16,8 +16,8 @@ public class DBUtil {
 	}
 	public static Connection getConnect() {
 		Connection con = null;
-		String url = "jdbc:mysql://127.0.0.1:3306/smarthome?serverTimezone=UTC";
-		String user = "mytest2";
+		String url = "jdbc:mysql://127.0.0.1:3306/project_smartfarm?serverTimezone=UTC";
+		String user = "sample";
 		String password = "1234";
 		try {
 			con = DriverManager.getConnection(url, user, password);
