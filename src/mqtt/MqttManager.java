@@ -15,7 +15,7 @@ import service.SensorDataServiceImpl;
 public class MqttManager implements MqttCallback { // MqttCallback을 직접 구현
 	private String id;
     private MqttClient client;
-    private final String broker = "tcp://192.168.14.48:1883";
+    private final String broker = "tcp://192.168.14.69:1883";
     private final String pubTopic = "/home/pc/livingroom/light";
     private final String subTopic = "/home/rasp/#"; // home 하위의 모든 토픽을 구독
     private SensorDataService service = new SensorDataServiceImpl();

@@ -1,8 +1,5 @@
 package controller;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 import dto.UserSessionDTO;
@@ -17,6 +14,7 @@ public class MainController {
     private final MainView view = new MainView(); // 화면을 담당할 View 객체
     private final MemberService service = new MemberServiceImpl();
     private MqttManager mqttManager;
+
     public void run() {
         while (true) {
             if (currentUser == null) {
@@ -39,7 +37,7 @@ public class MainController {
                 register();
                 break;
             case "9":
-                exitProgram();
+            	exitProgram();
                 break;
             default:
                 view.showMessage("(!) 잘못된 입력입니다.");
@@ -59,7 +57,7 @@ public class MainController {
 	         mqttManager = new MqttManager(currentUser.getLoginUser().getUserId());
 			handleMainMenu();
 		}else {
-			JOptionPane.showMessageDialog(null, "로그인실패");
+			System.out.println("로그인실패");
 			view.handleLogin();
 		}
 	}
@@ -68,14 +66,35 @@ public class MainController {
         // View에 현재 사용자 이름을 넘겨주어 메뉴를 보여주게 함
         MemberDTO user = view.showRegistrationForm();
         int result = service.register(user);
-        new Thread(() -> {
-            if (result >= 1) {
-                JOptionPane.showMessageDialog(null, "회원가입이 완료됐습니다.");
+        if (result >= 1) {
+            	try {
+                	System.out.println("회원가입이 완료됐습니다.");
+                	System.out.println("3...");
+					Thread.sleep(1000);
+                	System.out.println("2...");
+					Thread.sleep(1000);
+                	System.out.println("1...");
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            	
             } else {
-                JOptionPane.showMessageDialog(null, "회원가입에 실패했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            	try {
+                	System.out.println("회원가입이 실패했습니다.");
+                	System.out.println("3...");
+					Thread.sleep(1000);
+                	System.out.println("2...");
+					Thread.sleep(1000);
+                	System.out.println("1...");
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
-        }).start(); // 스레드 시작!
-	}
+        }
 	private void handleMainMenu() {
 		ConsoleUtils.clearConsole();
         // View에 현재 사용자 이름을 넘겨주어 메뉴를 보여주게 함
@@ -97,7 +116,7 @@ public class MainController {
                 logout();
                 break;
             case "9":
-                exitProgram();
+            	exitProgram();
                 break;
             default:
                 view.showMessage("(!) 잘못된 입력입니다.");
@@ -108,7 +127,7 @@ public class MainController {
 		
 	}
 	private void exitProgram() {
-		// TODO Auto-generated method stub
-		
+		if(mqttManager != null) mqttManager.close();
+		MainView.exitProgram();
 	}
 }

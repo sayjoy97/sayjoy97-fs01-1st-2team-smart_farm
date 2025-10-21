@@ -27,7 +27,7 @@ public class MainView {
 		System.out.println("\n==================================================");
 		System.out.println("      🌿 라즈베리파이 스마트홈 제어 시스템 🌿");
 		System.out.println("==================================================");
-		System.out.printf("%s님, 환영합니다!         현재 상태: 양호 ✅\n\n", "김서연");
+		System.out.printf("%s님, 환영합니다!         현재 상태: 양호 ✅\n\n", name);
 		System.out.println("  [1] 장치 제어 💡");
 		System.out.println("  [2] 센서 데이터 분석 📊");
 		System.out.println("  [3] 환경 설정 ⚙️");
