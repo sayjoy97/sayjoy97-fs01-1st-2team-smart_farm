@@ -16,14 +16,25 @@ public class MainController {
     private MqttManager mqttManager;
 
     public void run() {
+    	int loginTry = 0;
         while (true) {
             if (currentUser == null) {
                 // 로그인되지 않았을 때의 로직 처리
+            	if(loginTry!=0) {System.out.println("로그아웃 되었습니다. 3초 후 초기화면으로 이동합니다.");
+            	try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}}
+            	loginTry ++;
                 handleInitialMenu();
-            } else {
-                // 로그인된 후의 로직 처리
+            } else if (mqttManager != null && mqttManager.connectionAlive()) {
                 handleMainMenu();
+            } else {
+                currentUser = null; // 로그인부터 다시
             }
+
         }
     }
     private void handleInitialMenu() {
@@ -55,7 +66,7 @@ public class MainController {
 			currentUser = new UserSessionDTO(loginSuccessUser);
 			 System.out.println("\nMQTT 서비스에 연결을 시작합니다...");
 	         mqttManager = new MqttManager(currentUser.getLoginUser().getUserId());
-			handleMainMenu();
+
 		}else {
 			System.out.println("로그인실패");
 			view.handleLogin();
@@ -100,31 +111,31 @@ public class MainController {
         // View에 현재 사용자 이름을 넘겨주어 메뉴를 보여주게 함
         String choice = view.showMainMenu(currentUser.getLoginUser().getName());
         switch (choice) {
-            case "1":
-                // deviceControl();
-                view.showMessage("💡 장치 제어 메뉴입니다.");
-                break;
-            case "2":
-                // analyzeSensorData();
-                view.showMessage("📊 센서 데이터 분석 메뉴입니다.");
-                break;
-            case "3":
-                // configureSettings();
-                view.showMessage("⚙️ 환경 설정 메뉴입니다.");
-                break;
-            case "8":
-                logout();
-                break;
-            case "9":
-            	exitProgram();
-                break;
-            default:
-                view.showMessage("(!) 잘못된 입력입니다.");
-        }
+	            case "1":
+	                // deviceControl();
+	                view.showMessage("💡 장치 제어 메뉴입니다.");
+	                break;
+	            case "2":
+	                // analyzeSensorData();
+	                view.showMessage("📊 센서 데이터 분석 메뉴입니다.");
+	                break;
+	            case "3":
+	                // configureSettings();
+	                view.showMessage("⚙️ 환경 설정 메뉴입니다.");
+	                break;
+	            case "8":
+	                logout();
+	                break;
+	            case "9":
+	            	exitProgram();
+	                break;
+	            default:
+	                view.showMessage("(!) 잘못된 입력입니다.");
+	        }
     }
 	private void logout() {
-		// TODO Auto-generated method stub
-		
+		if(mqttManager != null) mqttManager.close();
+		currentUser = null;
 	}
 	private void exitProgram() {
 		if(mqttManager != null) mqttManager.close();

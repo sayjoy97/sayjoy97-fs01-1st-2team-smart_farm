@@ -1,0 +1,17 @@
+# 이클립스 관련
+.classpath
+.project
+.settings/
+
+# 빌드 결과물
+/bin/
+/target/
+
+# OS 관련
+.DS_Store
+Thumbs.db
+
+# 개인 설정
+*.log
+*.tmp
+*.lck
