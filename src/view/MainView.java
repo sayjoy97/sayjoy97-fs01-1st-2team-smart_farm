@@ -4,13 +4,15 @@ import java.util.Scanner;
 
 import dto.LoginUserDTO;
 import dto.MemberDTO;
+import dto.PresetDTO;
+import util.ConsoleUtils;
 
 public class MainView {
 	private static final Scanner scanner = new Scanner(System.in);
 
 	public String showInitialMenu() {
 		System.out.println("\n==================================================");
-		System.out.println("      🌿 라즈베리파이 스마트홈 제어 시스템 🌿");
+		System.out.println("      🌿 라즈베리파이 스마트팜 제어 시스템 🌿");
 		System.out.println("==================================================");
 		System.out.println("\n환영합니다! 원하시는 메뉴를 선택해주세요.\n");
 		System.out.println("  [1] 로그인");
@@ -18,19 +20,18 @@ public class MainView {
 		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
 		System.out.print("> 입력: ");
-
 		return scanner.nextLine();
-		
 	}
 
 	public String showMainMenu(String name) {
 		System.out.println("\n==================================================");
-		System.out.println("      🌿 라즈베리파이 스마트홈 제어 시스템 🌿");
+		System.out.println("      🌿 라즈베리파이 스마트팜 제어 시스템 🌿");
 		System.out.println("==================================================");
 		System.out.printf("%s님, 환영합니다!         현재 상태: 양호 ✅\n\n", name);
-		System.out.println("  [1] 장치 제어 💡");
-		System.out.println("  [2] 센서 데이터 분석 📊");
-		System.out.println("  [3] 환경 설정 ⚙️");
+		System.out.println("  [1] 식물 추가 💡");
+		System.out.println("  [2] 식물 관리 📊");
+		System.out.println("  [3] 마이 페이지 ⚙️");
+		System.out.println("  [4] 알림 관리 ⚙️");
 		System.out.println("  [8] 로그아웃");
 		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
@@ -70,7 +71,6 @@ public class MainView {
         newMember.setSecurityAnswer(scanner.nextLine());
         
         System.out.println("\n--------------------------------------------------");
-     
         return newMember;
     }
 	
@@ -88,9 +88,87 @@ public class MainView {
 	        System.out.println("프로그램을 종료합니다. 안녕히 가세요!");
 	        System.exit(0);
 	    }
-
 	public void showMessage(String string) {
-		// TODO Auto-generated method stub
+		ConsoleUtils.clearConsole();
+		System.out.println("\n==================================================");
+		System.out.println("      " + string);
+		System.out.println("==================================================");
+	}
+	
+	public void showInsertMessage(String string) {
+		ConsoleUtils.clearConsole();
+		System.out.println("\n==================================================");
+		System.out.println("      " + string);
+		System.out.println("--------------------------------------------------");
+	}
+	
+	public String showAddPlantMenu() {
+		System.out.println("\n원하시는 메뉴를 선택해주세요.\n");
+		System.out.println("  [1] 추천 식물 1: 이름");
+		System.out.println("  [2] 추천 식물 2: 이름");
+		System.out.println("  [3] 추천 식물 3: 이름");
+		System.out.println("  [4] 신규 식물 추가");
+		System.out.println("  [8] 뒤로가기");
+		System.out.println("  [9] 프로그램 종료");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
+	
+	public PresetDTO showAddNewPlantMenu() {
+		PresetDTO presetDTO = new PresetDTO();
+		System.out.print("식물 이름: ");
+		presetDTO.setPlantName(scanner.nextLine());
+		System.out.print("희망 온도 설정: ");
+		presetDTO.setOptimalTemp(scanner.nextFloat());
+		System.out.print("희망 습도 설정: ");
+		presetDTO.setOptimalHumidity(scanner.nextFloat());
+		System.out.print("희망 조도 설정: ");
+		presetDTO.setLightIntensity(scanner.nextFloat());
+		System.out.print("희망 CO2농도 설정: ");
+		presetDTO.setCo2Level(scanner.nextFloat());
+		System.out.print("희망 토양 습도 설정: ");
+		presetDTO.setSoilMoisture(scanner.nextFloat());
+		System.out.print("예상 생장 기간(일): ");
+		presetDTO.setGrowthPeriodDays(scanner.nextInt());
 		
+		return presetDTO;
+	}
+	
+	public String showPresetMenu(PresetDTO presetDTO) {
+		System.out.println("식물 이름: " + presetDTO.getPlantName());
+		System.out.println("적정 온도: " + presetDTO.getOptimalTemp());
+		System.out.println("적정 습도: " + presetDTO.getOptimalHumidity());
+		System.out.println("적정 조도: " + presetDTO.getLightIntensity());
+		System.out.println("적정 CO2농도: " + presetDTO.getCo2Level());
+		System.out.println("적정 토양 습도: " + presetDTO.getSoilMoisture());
+		System.out.println("예상 생장 기간(일): " + presetDTO.getGrowthPeriodDays());
+		
+		System.out.println("\n--------------------------------------------------");
+		System.out.println("  [1] 확인");
+		System.out.println("  [2] 취소");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

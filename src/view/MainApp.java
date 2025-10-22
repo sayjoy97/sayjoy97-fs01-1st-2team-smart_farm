@@ -8,8 +8,5 @@ public class MainApp {
 
 		MainController mainController = new MainController();
 	    mainController.run(); // 컨트롤러 실행	
-	  
 	}
-
-
 }

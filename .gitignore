@@ -1,17 +1,44 @@
-# 이클립스 관련
-.classpath
+# ---- Java & Common Build ----
+*.class
+*.classpath
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.log
+hs_err_pid*
+replay_pid*
+
+# ---- IntelliJ / Eclipse / VSCode ----
+.idea/
+*.iml
+out/
 .project
 .settings/
+bin/
+.vscode/
 
-# 빌드 결과물
-/bin/
-/target/
+# ---- Maven / Gradle ----
+target/
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
 
-# OS 관련
+# ---- Test / Local Env ----
+test-output/
+coverage/
+jacoco.exec
+.env
+*.properties.local
+*.yml.local
+
+# ---- OS-specific ----
 .DS_Store
 Thumbs.db
-
-# 개인 설정
-*.log
-*.tmp
-*.lck

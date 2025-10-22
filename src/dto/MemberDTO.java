@@ -3,7 +3,6 @@ package dto;
 import java.sql.Timestamp;
 
 public class MemberDTO {
-
     private int userUid;
     private String userId;
     private String password;
