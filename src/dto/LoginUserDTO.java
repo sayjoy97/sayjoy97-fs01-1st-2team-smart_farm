@@ -2,18 +2,17 @@ package dto;
 
 public class LoginUserDTO {
     private String userId;      // 아이디
-    private String pass;
+    private String password;
     public LoginUserDTO() {
-    	
     }
-	public LoginUserDTO(String userId, String pass) {
+	public LoginUserDTO(String userId, String password) {
 		super();
 		this.userId = userId;
-		this.pass = pass;
+		this.password = password;
 	}
 	@Override
 	public String toString() {
-		return "LoginUserDTO [userId=" + userId + ", pass=" + pass + "]";
+		return "LoginUserDTO [userId=" + userId + ", password=" + password + "]";
 	}
 	public String getUserId() {
 		return userId;
@@ -21,11 +20,10 @@ public class LoginUserDTO {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public String getPass() {
-		return pass;
+	public String getPassword() {
+		return password;
 	}
-	public void setPass(String pass) {
-		this.pass = pass;
+	public void setPassword(String password) {
+		this.password = password;
 	} 
-    
 }
