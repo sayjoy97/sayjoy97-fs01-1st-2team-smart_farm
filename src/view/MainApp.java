@@ -14,8 +14,5 @@ public class MainApp {
         frame.dispose();          // 메모리에서 완전히 제거
 		MainController mainController = new MainController();
 	    mainController.run(); // 컨트롤러 실행	
-	  
 	}
-
-
 }

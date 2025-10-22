@@ -1,10 +1,12 @@
 package controller;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
+import dao.PlantDAO;
+import dao.PlantDAOImpl;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
+import dto.PresetDTO;
 import dto.UserSessionDTO;
 import mqtt.MqttManager;
 import service.MemberService;
@@ -51,7 +53,7 @@ public class MainController {
     	
     	LoginUserDTO loginUser = view.handleLogin();
     	MemberDTO loginSuccessUser = service.login(loginUser.getUserId(),
-    									loginUser.getPass());
+    									loginUser.getPassword());
     	//로그인 성공하면 세션에 로그인사용자정보를 담고 Mqtt Subscriber를 실행함
 		if(loginSuccessUser!=null) {
 			currentUser = new UserSessionDTO(loginSuccessUser);
@@ -82,16 +84,20 @@ public class MainController {
         String choice = view.showMainMenu(currentUser.getLoginUser().getName());
         switch (choice) {
             case "1":
-                // deviceControl();
-                view.showMessage("💡 장치 제어 메뉴입니다.");
+                view.showMessage("💡 식물 추가 메뉴입니다.");
+                handleAddPlantMenu();
                 break;
             case "2":
                 // analyzeSensorData();
-                view.showMessage("📊 센서 데이터 분석 메뉴입니다.");
+                view.showMessage("📊 식물 관리 메뉴입니다.");
                 break;
             case "3":
                 // configureSettings();
-                view.showMessage("⚙️ 환경 설정 메뉴입니다.");
+                view.showMessage("⚙️ 마이페이지 메뉴입니다.");
+                break;
+            case "4":
+                // 
+                view.showMessage("⚙️ 일림 관리 메뉴입니다.");
                 break;
             case "8":
                 logout();
@@ -103,6 +109,36 @@ public class MainController {
                 view.showMessage("(!) 잘못된 입력입니다.");
         }
     }
+	
+	private void handleAddPlantMenu() {
+        String choice = view.showAddPlantMenu();
+        PlantDAO plantDAO = new PlantDAOImpl();
+        String yn = "";
+        switch (choice) {
+            case "1":
+                view.showMessage("추천 식물 1입니다.");
+                yn = view.showPresetMenu(plantDAO.selectPreset(Integer.parseInt(choice)));
+                break;
+            case "2":
+                view.showMessage("추천 식물 2입니다.");
+                break;
+            case "3":
+                view.showMessage("추천 식물 3입니다.");
+                break;
+            case "4":
+                view.showInsertMessage("신규 식물의 프리세을 설정해 주세요.");
+                PresetDTO presetDTO = view.showAddNewPlantMenu();
+                PlantDAOImpl palntDAOImpl = new PlantDAOImpl();
+                palntDAOImpl.addCustomPreset(presetDTO);
+                break;
+            case "8":
+            	handleMainMenu();
+                break;
+            default:
+                view.showMessage("(!) 잘못된 입력입니다.");
+        }
+    }
+	
 	private void logout() {
 		// TODO Auto-generated method stub
 		

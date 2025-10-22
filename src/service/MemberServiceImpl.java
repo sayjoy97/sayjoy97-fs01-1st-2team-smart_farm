@@ -14,8 +14,8 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public MemberDTO login(String id, String pass) {
-		MemberDTO user = memberDAO.login(id, pass);
+	public MemberDTO login(String userId, String password) {
+		MemberDTO user = memberDAO.login(userId, password);
 		System.out.println(user);
 		return user;
 	}
