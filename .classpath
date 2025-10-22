@@ -6,7 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/iot_fullstack1/tool/mysql-connector-java-8.0.21/mysql-connector-java-8.0.21.jar"/>
+	<classpathentry kind="lib" path="C:/iot_fullstack1/mysql-connector-java-8.0.21/mysql-connector-java-8.0.21.jar"/>
 	<classpathentry kind="lib" path="C:/iot_fullstack1/tool/org.eclipse.paho.client.mqttv3-1.2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
