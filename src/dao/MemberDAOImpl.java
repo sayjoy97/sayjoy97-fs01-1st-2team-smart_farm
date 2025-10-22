@@ -13,7 +13,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 	@Override
 	public int register(MemberDTO user) {
-		String sql = "insert into users values(null,?,?,?,?,?,?)";
+		String sql = "insert into users values(null, ?, ?, ?, ?, ?, ?, ?)";
 		Connection con = null;
 		PreparedStatement ptmt = null;
 		int result = 0;
@@ -26,6 +26,7 @@ public class MemberDAOImpl implements MemberDAO {
 			ptmt.setString(4, user.getName());
 			ptmt.setString(5, user.getSecurityQuestion());
 			ptmt.setString(6, user.getSecurityAnswer());
+			ptmt.setString(7, user.getDeviceSerialNumber());
 			result = ptmt.executeUpdate();
 			
 		} catch (SQLException e) {
@@ -51,9 +52,10 @@ public class MemberDAOImpl implements MemberDAO {
 			rs =  ptmt.executeQuery();
 			if(rs.next()) {
 				loginSuccessUser = new MemberDTO(rs.getInt("user_uid"), 
-						rs.getString("user_id"),rs.getString("password"),
-						rs.getString("email"), rs.getString("name")
-						,rs.getString("security_question"),rs.getString("security_answer"));
+						rs.getString("user_id"), rs.getString("password"),
+						rs.getString("email"), rs.getString("name"),
+						rs.getString("security_question"), rs.getString("security_answer"),
+						rs.getString("device_serial_number"));
 			}
 		}  catch (SQLException e) {
 			e.printStackTrace();

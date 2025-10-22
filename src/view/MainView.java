@@ -65,10 +65,12 @@ public class MainView {
         newMember.setName(scanner.nextLine());
         System.out.print("  [필수] 이메일: ");
         newMember.setEmail(scanner.nextLine());
-        System.out.print("  [선택] 본인 확인 질문: ");
+        System.out.print("  [필수] 본인 확인 질문: ");
         newMember.setSecurityQuestion(scanner.nextLine());
-        System.out.print("  [선택] 본인 확인 답변: ");
+        System.out.print("  [필수] 본인 확인 답변: ");
         newMember.setSecurityAnswer(scanner.nextLine());
+        System.out.print("  [필수] 기기 시리얼 넘버: ");
+        newMember.setDeviceSerialNumber(scanner.nextLine());
         
         System.out.println("\n--------------------------------------------------");
         return newMember;
