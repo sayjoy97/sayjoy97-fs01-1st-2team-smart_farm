@@ -11,4 +11,8 @@ public class PlantServiceImpl implements PlantService {
 		int result = plantDAO.addCustomPreset(presetDTO);
 		return result;
 	}
+	public PresetDTO selectPreset(int presetUid) {
+		PresetDTO presetDTO = plantDAO.selectPreset(presetUid);
+		return presetDTO;
+	}
 }

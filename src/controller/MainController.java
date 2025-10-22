@@ -11,6 +11,8 @@ import dto.UserSessionDTO;
 import mqtt.MqttManager;
 import service.MemberService;
 import service.MemberServiceImpl;
+import service.PlantService;
+import service.PlantServiceImpl;
 import util.ConsoleUtils;
 import view.MainView;
 
@@ -60,7 +62,7 @@ public class MainController {
 			 System.out.println("\nMQTT 서비스에 연결을 시작합니다...");
 	         mqttManager = new MqttManager(currentUser.getLoginUser().getUserId());
 			handleMainMenu();
-		}else {
+		} else {
 			JOptionPane.showMessageDialog(null, "로그인실패");
 			view.handleLogin();
 		}
@@ -73,6 +75,7 @@ public class MainController {
         new Thread(() -> {
             if (result >= 1) {
                 JOptionPane.showMessageDialog(null, "회원가입이 완료됐습니다.");
+                service.addDevice(user);
             } else {
                 JOptionPane.showMessageDialog(null, "회원가입에 실패했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
             }
@@ -112,12 +115,12 @@ public class MainController {
 	
 	private void handleAddPlantMenu() {
         String choice = view.showAddPlantMenu();
-        PlantDAO plantDAO = new PlantDAOImpl();
+        PlantService plantService = new PlantServiceImpl();
         String yn = "";
         switch (choice) {
             case "1":
                 view.showMessage("추천 식물 1입니다.");
-                yn = view.showPresetMenu(plantDAO.selectPreset(Integer.parseInt(choice)));
+                yn = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 break;
             case "2":
                 view.showMessage("추천 식물 2입니다.");
@@ -128,8 +131,7 @@ public class MainController {
             case "4":
                 view.showInsertMessage("신규 식물의 프리세을 설정해 주세요.");
                 PresetDTO presetDTO = view.showAddNewPlantMenu();
-                PlantDAOImpl palntDAOImpl = new PlantDAOImpl();
-                palntDAOImpl.addCustomPreset(presetDTO);
+                plantService.addCustomPreset(presetDTO);
                 break;
             case "8":
             	handleMainMenu();

@@ -10,12 +10,12 @@ public class MemberDTO {
     private String name;
     private String securityQuestion;
     private String securityAnswer;
+    private String deviceSerialNumber;
 
-    // 기본 생성자
     public MemberDTO() {
     }
     public MemberDTO(int userUid, String userId, String password, String email, String name, String securityQuestion,
-    		String securityAnswer) {
+    		String securityAnswer, String deviceSerialNumber) {
 		super();
 		this.userUid = userUid;
 		this.userId = userId;
@@ -24,9 +24,8 @@ public class MemberDTO {
 		this.name = name;
 		this.securityQuestion = securityQuestion;
 		this.securityAnswer = securityAnswer;
+		this.deviceSerialNumber = deviceSerialNumber;
 	}
-    
-    // --- Getter and Setter ---
     
 	public int getUserUid() {
 		return userUid;
@@ -70,10 +69,16 @@ public class MemberDTO {
 	public void setSecurityAnswer(String securityAnswer) {
 		this.securityAnswer = securityAnswer;
 	}
+	public String getDeviceSerialNumber() {
+		return deviceSerialNumber;
+	}
+	public void setDeviceSerialNumber(String deviceSerialNumber) {
+		this.deviceSerialNumber = deviceSerialNumber;
+	}
 	@Override
 	public String toString() {
 		return "MemberDTO [userUid=" + userUid + ", userId=" + userId + ", password=" + password + ", email=" + email
 				+ ", name=" + name + ", securityQuestion=" + securityQuestion + ", securityAnswer=" + securityAnswer
-				+ "]";
+				+ ", deviceSerialNumber=" + deviceSerialNumber + "]";
 	}
 }
