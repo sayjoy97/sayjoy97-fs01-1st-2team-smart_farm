@@ -142,11 +142,12 @@ public class MainController {
     }
 	
 	private void logout() {
-		// TODO Auto-generated method stub
-		
+		if(mqttManager != null) mqttManager.close();
+		mqttManager = null;
+		currentUser = null;
 	}
 	private void exitProgram() {
-		// TODO Auto-generated method stub
-		
+		logout();
+		MainView.exitProgram();
 	}
 }
