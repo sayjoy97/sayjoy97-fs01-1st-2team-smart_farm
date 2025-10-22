@@ -15,9 +15,9 @@ import service.SensorDataServiceImpl;
 public class MqttManager implements MqttCallback { // MqttCallback을 직접 구현
 	private String id;
     private MqttClient client;
-    private final String broker = "tcp://192.168.14.48:1883";
-    private final String pubTopic = "/home/pc/livingroom/light";
-    private final String subTopic = "/home/rasp/#"; // home 하위의 모든 토픽을 구독
+    private final String broker = "tcp://localhost:1883";
+    private final String pubTopic = "/smartfarm/sensor/"; // 유저, 기계 식별 앞에 붙이기
+    private final String subTopic = "/smartfarm/#"; // {유저}/smartfarm 하위의 모든 토픽을 구독
     private SensorDataService service = new SensorDataServiceImpl();
 
     public MqttManager(String id) {
@@ -58,12 +58,12 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     }
     
     // 발행을 처리하는 메소드
-    public void publish(String topic, String content) {
+    public void publish(String userId, String device, String content) {
         try {
             System.out.println("Publishing message: " + content);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(0); // QoS Level 0
-            this.client.publish(topic, message);
+            this.client.publish(userId+device+pubTopic, message); //device 보낼때 앞에 '/'를 붙일 것
             System.out.println("Message published.");
         } catch (MqttException me) {
             me.printStackTrace();
@@ -86,6 +86,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     @Override
     public void connectionLost(Throwable cause) {
         System.out.println("Connection lost: " + cause.getMessage());
+        
     }
 
     @Override
