@@ -107,6 +107,4 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     public void deliveryComplete(IMqttDeliveryToken token) {
         // System.out.println("Delivery complete.");
     }
-
-    
 }

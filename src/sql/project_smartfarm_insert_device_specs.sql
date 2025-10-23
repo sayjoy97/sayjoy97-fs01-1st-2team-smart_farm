@@ -7,7 +7,7 @@ VALUES (
     'optimal_temp',       TRUE,
     'optimal_humidity',   TRUE,
     'light_intensity',    TRUE,
-    'co2_level',    TRUE,
+    'co2_level',          TRUE,
     'soil_moisture',      TRUE,
     'growth_period_days', TRUE
   )
@@ -20,7 +20,7 @@ VALUES (
     'optimal_temp',       TRUE,
     'optimal_humidity',   TRUE,
     'light_intensity',    TRUE,
-    'co2_level',    TRUE,
+    'co2_level',          TRUE,
     'soil_moisture',      TRUE,
     'growth_period_days', TRUE
   )
@@ -33,9 +33,9 @@ VALUES (
     'optimal_temp',       TRUE,
     'optimal_humidity',   TRUE,
     'light_intensity',    TRUE,
-    'co2_level',    TRUE,
+    'co2_level',          FALSE,
     'soil_moisture',      TRUE,
-    'growth_period_days', FALSE
+    'growth_period_days', TRUE
   )
 );
 
@@ -46,8 +46,8 @@ VALUES (
     'optimal_temp',       TRUE,
     'optimal_humidity',   TRUE,
     'light_intensity',    TRUE,
-    'co2_level',    TRUE,
+    'co2_level',          FALSE,
     'soil_moisture',      TRUE,
-    'growth_period_days', FALSE
+    'growth_period_days', TRUE
   )
 );
