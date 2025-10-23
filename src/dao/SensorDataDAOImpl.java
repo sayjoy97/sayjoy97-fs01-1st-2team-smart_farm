@@ -16,14 +16,14 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	
 	@Override
 	public int insertSensorData(SensorDataDTO data) {
-		String sql = "insert into sensor_logs values(?,now(),?,?,?,?)";
+		String sql = "insert into sensor_logs values(null,?,now(),?,?,?,?)";
 		Connection con = null;
 		PreparedStatement ptmt = null;	
 		int result = 0;
 		try {
 			con = DBUtil.getConnect();
 			ptmt = con.prepareStatement(sql);
-			ptmt.setInt(1, data.getFarmUid());
+			ptmt.setString(1, data.getFarmUid());
 			ptmt.setFloat(2, data.getMeasuredTemp());
 			ptmt.setFloat(3, data.getMeasuredHumidity());
 			ptmt.setFloat(4, data.getMeasuredCo2());
@@ -40,7 +40,7 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	}
 
 	@Override
-	public ArrayList<SensorDataDTO> getLogsByFarm(int farmUid, Integer hours, Integer limit) {
+	public ArrayList<SensorDataDTO> getLogsByFarm(String farmUid, Integer hours, Integer limit) {
 	    String sql = "select * from sensor_logs where farm_uid = ?";
 
 	    // 선택적으로 시간 조건 추가
@@ -67,7 +67,7 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	        
 	        //조건에 맞으면 인덱스를 올려서 ?에 값을 받게끔 
 	        int idx = 1;
-	        ptmt.setInt(idx++, farmUid);
+	        ptmt.setString(idx++, farmUid);
 	        if (hours != null) ptmt.setInt(idx++, hours);
 	        if (limit != null) ptmt.setInt(idx++, limit);
 
@@ -75,7 +75,7 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	        while (rs.next()) {
 	            SensorDataDTO s = new SensorDataDTO(
 	                rs.getLong("log_uid"),
-	                rs.getInt("farm_uid"),
+	                rs.getString("farm_uid"),
 	                rs.getTimestamp("recorded_at"),
 	                rs.getFloat("measured_temp"),
 	                rs.getFloat("measured_humidity"),
@@ -96,10 +96,10 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 
 	@Override
 	public List<SensorDataDTO> getLogsByUser(int userUid, Integer hours, Integer limit) {
-		String sql = "select sl.*"
-				+ "from sensor_logs sl"
-				+ "join farms f on sl.farm_uid = f.farm_uid" 
-				+ "where f.user_id = ?";
+		String sql = "select sl.* "
+				+ "from sensor_logs sl "
+				+ "join farms f on sl.farm_uid = f.farm_uid " 
+				+ "where f.user_id = ? ";
 		// 선택적으로 시간 조건 추가
 		if(hours != null) {
 			sql += "and recorded_at >= now() - interval ? hour";
@@ -129,7 +129,7 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	        while (rs.next()) {
 	            SensorDataDTO s = new SensorDataDTO(
 	                rs.getLong("log_uid"),
-	                rs.getInt("farm_uid"),
+	                rs.getString("farm_uid"),
 	                rs.getTimestamp("recorded_at"),
 	                rs.getFloat("measured_temp"),
 	                rs.getFloat("measured_humidity"),

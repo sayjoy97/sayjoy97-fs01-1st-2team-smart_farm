@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class SensorDataDTO {
 	    private long logId;
-	    private int farmUid;
+	    private String farmUid;
 	    private Timestamp recordedAt; // 센서 데이터가 기록된 시각 (MySQL DATETIME과 매핑)
 	    private Float measuredTemp;
 	    private Float measuredHumidity;
@@ -14,7 +14,7 @@ public class SensorDataDTO {
 	    	
 	    }
 	    
-		public SensorDataDTO(long logId, int farmUid, Timestamp recordedAt, Float measuredTemp, Float measuredHumidity,
+		public SensorDataDTO(long logId, String farmUid, Timestamp recordedAt, Float measuredTemp, Float measuredHumidity,
 				Float measuredCo2, Float measuredSoilMoisture) {
 			super();
 			this.logId = logId;
@@ -41,11 +41,11 @@ public class SensorDataDTO {
 			this.logId = logId;
 		}
 
-		public int getFarmUid() {
+		public String getFarmUid() {
 			return farmUid;
 		}
 
-		public void setFarmUid(int farmUid) {
+		public void setFarmUid(String farmUid) {
 			this.farmUid = farmUid;
 		}
 
