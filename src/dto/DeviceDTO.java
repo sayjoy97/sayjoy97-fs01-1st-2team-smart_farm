@@ -1,23 +1,23 @@
 package dto;
 
 public class DeviceDTO {
-	private int devuceUid;
+	private int deviceSerialNumber;
 	private int userUid;
 	private int specUid;
 	
 	public DeviceDTO() {
 	}
-	public DeviceDTO(int devuceUid, int userUid, int specUid) {
+	public DeviceDTO(int deviceSerialNumber, int userUid, int specUid) {
 		super();
-		this.devuceUid = devuceUid;
+		this.deviceSerialNumber = deviceSerialNumber;
 		this.userUid = userUid;
 		this.specUid = specUid;
 	}
-	public int getDevuceUid() {
-		return devuceUid;
+	public int getDeviceSerialNumber() {
+		return deviceSerialNumber;
 	}
-	public void setDevuceUid(int devuceUid) {
-		this.devuceUid = devuceUid;
+	public void setDeviceSerialNumber(int deviceSerialNumber) {
+		this.deviceSerialNumber = deviceSerialNumber;
 	}
 	public int getUserUid() {
 		return userUid;
@@ -33,6 +33,6 @@ public class DeviceDTO {
 	}
 	@Override
 	public String toString() {
-		return "DeviceDTO [devuceUid=" + devuceUid + ", userUid=" + userUid + ", specUid=" + specUid + "]";
+		return "DeviceDTO [deviceSerialNumber=" + deviceSerialNumber + ", userUid=" + userUid + ", specUid=" + specUid + "]";
 	}
 }
