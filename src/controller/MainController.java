@@ -2,8 +2,6 @@ package controller;
 
 import javax.swing.JOptionPane;
 
-import dao.PlantDAO;
-import dao.PlantDAOImpl;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 import dto.PresetDTO;
