@@ -15,12 +15,13 @@ import service.SensorDataServiceImpl;
 public class MqttManager implements MqttCallback { // MqttCallback을 직접 구현
 	private String id;
     private MqttClient client;
+    private boolean collectorMode;
     private final String broker = "tcp://localhost:1883";
     private final String pubTopic = "/smartfarm/sensor/"; // 유저, 기계 식별 앞에 붙이기
     private final String subTopic = "/smartfarm/#"; // {유저}/smartfarm 하위의 모든 토픽을 구독
     private SensorDataService service = new SensorDataServiceImpl();
 
-    public MqttManager(String id) {
+    public MqttManager(String id) {//사용자 모드 생성자
     	this.id = id;
         try {
         	
@@ -46,12 +47,42 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
             me.printStackTrace();
         }
     }
+    public MqttManager(boolean collectorMode) {//수집기 모드 생성자
+        try {
+        	this.collectorMode = collectorMode;
+            // 고유한 클라이언트 ID 생성 (충돌 방지)
+            String clientId = "collector";
+            client = new MqttClient(broker, clientId);
 
+            // 연결 옵션 설정
+            MqttConnectOptions connOpts = new MqttConnectOptions();
+            connOpts.setCleanSession(true);
+            connOpts.setAutomaticReconnect(true); // 자동 재연결 활성화
+
+            // MqttCallback 인터페이스를 현재 클래스가 구현했으므로 this로 설정
+            client.setCallback(this);
+
+            System.out.println("Connecting to broker: " + broker);
+            client.connect(connOpts);
+            System.out.println("Connected.");
+
+            // 연결 후 바로 구독 시작
+            this.subscribe();
+
+        } catch (MqttException me) {
+            me.printStackTrace();
+        }
+    }
     // 구독을 처리하는 메소드
     private void subscribe() {
         try {
-            this.client.subscribe(id+subTopic);
-            System.out.println("Subscribed to topic: " + id+subTopic);
+            if (collectorMode) {
+                this.client.subscribe("+/smartfarm/+/sensor/data", 1);
+                System.out.println("Subscribed to topic: +/smartfarm/+/sensor/data");
+            } else {
+                this.client.subscribe(id + subTopic);
+                System.out.println("Subscribed to topic: " + id + subTopic);
+            }
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -107,4 +138,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     public void deliveryComplete(IMqttDeliveryToken token) {
         // System.out.println("Delivery complete.");
     }
+
+
+    
 }
