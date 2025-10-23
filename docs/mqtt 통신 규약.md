@@ -5,6 +5,9 @@
 | **DB 서버**         | 센서 데이터 수신·저장      | —                                                 | `+/smartfarm/+/sensor/data`          | `user1/smartfarm/A101:1/sensor/data` | 위와 동일                                                       | 수신 후 `sensor_logs` INSERT. 조회는 JDBC |
 | 〃                 | 액추에이터 명령 발행(선택)   | `{userId}/smartfarm/{farmUid}/cmd/{actuatorType}` | `{userId}/smartfarm/+/ack/#`         | `user1/smartfarm/A101:1/cmd/pump`    | `action=on;duration=3000;corrId=abc123`                     | QoS 1 권장                            |
 | **사용자 앱(콘솔/GUI)** | 명령 발행 / 실시간 모니터링  | `{userId}/smartfarm/{farmUid}/cmd/{actuatorType}` | `{userId}/smartfarm/+/sensor/data`   | `user1/smartfarm/A101:1/cmd/led/1`   | `action=on;brightness=80;corrId=abc123`                     | 본인 소유 농장만 구독                        |
+
+
+
 명령 예시: user1/smartfarm/A101:1/cmd/led/1
 페이로드: action=on;brightness=80;corrId=abc123
 
