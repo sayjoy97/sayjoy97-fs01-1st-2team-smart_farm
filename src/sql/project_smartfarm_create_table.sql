@@ -11,7 +11,7 @@ CREATE TABLE project_smartfarm.users (
     name                    VARCHAR(50)  NOT NULL,
     security_question       VARCHAR(100) NOT NULL,
     security_answer         VARCHAR(100) NOT NULL,
-    device_serial_number    VARCHAR(20) NOT NULL,
+    device_serial_number    VARCHAR(20)  NOT NULL,
     UNIQUE INDEX user_id_UNIQUE (user_id ASC),
     UNIQUE INDEX email_UNIQUE (email ASC),
     UNIQUE INDEX device_serial_number_UNIQUE (device_serial_number ASC)
@@ -64,21 +64,13 @@ CREATE TABLE project_smartfarm.plant_presets (
 --  FARMS: 사용자별 농장 관리
 -- ==============================
 CREATE TABLE project_smartfarm.farms (
-						
     farm_uid                varchar(20) PRIMARY KEY,
-    user_uid                INT         NOT NULL,
-    device_serial_number    varchar(20) NOT NULL,
-    preset_uid              INT         NOT NULL,
-    farm_number             INT         NOT NULL,
-    planting_date           DATE        NOT NULL,
+    user_uid                INT NOT NULL,
+    preset_uid              INT,
+    planting_date           DATE,
     CONSTRAINT fk_farms_user
         FOREIGN KEY (user_uid)
         REFERENCES project_smartfarm.users (user_uid)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    CONSTRAINT fk_farms_device
-        FOREIGN KEY (device_serial_number)
-        REFERENCES project_smartfarm.devices (device_serial_number)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT fk_farms_preset

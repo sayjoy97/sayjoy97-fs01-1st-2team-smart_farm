@@ -137,21 +137,46 @@ public class MainView {
 		return presetDTO;
 	}
 	
-	public String showPresetMenu(PresetDTO presetDTO) {
+	public String[] showPresetMenu(PresetDTO presetDTO) {
+		String[] value = new String[3];  // value[0]: (식물 이름) / value[1]: (기기 시리얼 넘버) / value[2]: (슬롯번호) / value[3]: 1(확인), 2(취소)
 		System.out.println("식물 이름: " + presetDTO.getPlantName());
+		value[0] = presetDTO.getPlantName();
 		System.out.println("적정 온도: " + presetDTO.getOptimalTemp());
 		System.out.println("적정 습도: " + presetDTO.getOptimalHumidity());
 		System.out.println("적정 조도: " + presetDTO.getLightIntensity());
 		System.out.println("적정 CO2농도: " + presetDTO.getCo2Level());
 		System.out.println("적정 토양 습도: " + presetDTO.getSoilMoisture());
 		System.out.println("예상 생장 기간(일): " + presetDTO.getGrowthPeriodDays());
+		System.out.println("기기 시리얼 넘버를 입력하세요: ");
+		value[1] = scanner.nextLine();
+		System.out.print("슬롯 번호를 입력하세요: ");
+		value[2] = scanner.nextLine();
 		
 		System.out.println("\n--------------------------------------------------");
 		System.out.println("  [1] 확인");
 		System.out.println("  [2] 취소");
 		System.out.println("\n--------------------------------------------------");
 		System.out.print("> 입력: ");
+		value[3] = scanner.nextLine();
+		return value;
+	}
+	
+	public String showMyPageMenu() {
+		System.out.println("\n원하시는 메뉴를 선택해주세요.\n");
+		System.out.println("  [1] 기기 추가");
+		System.out.println("  [8] 뒤로가기");
+		System.out.println("  [9] 프로그램 종료");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
 		return scanner.nextLine();
+	}
+	
+	public String showAddDevice() {
+		System.out.println("\n기기 시리얼 넘버를 입력해주세요.\n");
+		System.out.print("  기기 시리얼 넘버: ");
+		String dsn =  scanner.nextLine();
+		System.out.println("\n--------------------------------------------------");
+		return dsn;
 	}
 }
 
