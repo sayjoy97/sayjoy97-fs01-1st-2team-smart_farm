@@ -1,14 +1,16 @@
 package controller;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
-import dto.DeviceDTO;
 import dto.FarmDTO;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 import dto.PresetDTO;
+import dto.SensorDataDTO;
 import dto.UserSessionDTO;
 import mqtt.MqttManager;
 import service.DeviceService;
@@ -19,6 +21,8 @@ import service.MemberService;
 import service.MemberServiceImpl;
 import service.PlantService;
 import service.PlantServiceImpl;
+import service.SensorDataService;
+import service.SensorDataServiceImpl;
 import util.ConsoleUtils;
 import view.MainView;
 
@@ -30,6 +34,7 @@ public class MainController {
     private final FarmService farmService = new FarmServiceImpl();
     MemberDTO loginSuccessUser = null;
     private MqttManager mqttManager;
+    private final Scanner scanner = new Scanner(System.in);
     public void run() {
         while (true) {
             if (currentUser == null) {
@@ -167,17 +172,26 @@ public class MainController {
 		ArrayList<FarmDTO> farms = farmService.selectDevicesFarm(loginSuccessUser);
 	    String choice = view.showMyFarmsMenu(farms);
 
-
-	    int choiceNum = Integer.parseInt(choice);
-
-	     if (choiceNum == 8) {
-	              handleMainMenu();
-	   } else if (choiceNum == 9) {
-	                view.showMessage("프로그램을 종료합니다.");
-	    } else {
-	                view.showMessage("(!) 잘못된 입력입니다.");
-	            }
-	        }
+	    try {
+	    	int choiceNum = Integer.parseInt(choice);
+	    	
+	    	if (choiceNum == 8) {
+	    		handleMainMenu();
+	    	} else if (choiceNum == 9) {
+	    		exitProgram();
+	    	} else if (choiceNum >= 1 && choiceNum <= farms.size()) {
+	    		// 선택한 Farm으로 상세 페이지 이동
+	    		FarmDTO selectedFarm = farms.get(choiceNum - 1);
+	    		handleFarmDetailMenu(selectedFarm);
+	    	} else {
+	    		view.showMessage("(!) 잘못된 입력입니다.");
+	    		handleManagePlantMenu();
+	    	}
+	    } catch (NumberFormatException e) {
+	    	view.showMessage("(!) 숫자를 입력해주세요.");
+	    	handleManagePlantMenu();
+	    }
+	}
 
 	
 	private void handleMyPageMenu() {
@@ -201,6 +215,47 @@ public class MainController {
 		}
 	}
 
+	private void handleFarmDetailMenu(FarmDTO farm) {
+		ConsoleUtils.clearConsole();
+		
+		// Preset 정보 조회
+		PlantService plantService = new PlantServiceImpl();
+		PresetDTO preset = plantService.selectPreset(farm.getPresetUid());
+		
+		// 최근 센서 데이터 조회
+		SensorDataService sensorDataService = new SensorDataServiceImpl();
+		List<SensorDataDTO> latestDataList = sensorDataService.getLogsByFarm(farm.getFarmUid(), 24, 1);
+		SensorDataDTO latestData = null;
+		if(latestDataList != null && !latestDataList.isEmpty()) {
+			latestData = latestDataList.get(0);
+		}
+		
+		// Farm 상세 정보 표시
+		view.showFarmDetail(farm, preset, latestData);
+		
+		// 메뉴 선택
+		String choice = view.showFarmDetailMenu();
+		
+		switch (choice) {
+		case "1":
+			ConsoleUtils.clearConsole();
+			view.showSensorDataList(farm.getFarmUid());
+			System.out.print("\n계속하려면 Enter를 누르세요...");
+			scanner.nextLine();
+			handleFarmDetailMenu(farm);
+			break;
+		case "8":
+			handleManagePlantMenu();
+			break;
+		case "9":
+			exitProgram();
+			break;
+		default:
+			view.showMessage("(!) 잘못된 입력입니다.");
+			handleFarmDetailMenu(farm);
+		}
+	}
+	
 	private void logout() {
 		if(mqttManager != null) mqttManager.close();
 		mqttManager = null;
