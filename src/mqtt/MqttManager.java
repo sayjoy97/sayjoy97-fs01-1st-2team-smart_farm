@@ -15,7 +15,7 @@ import service.SensorDataServiceImpl;
 public class MqttManager implements MqttCallback { // MqttCallback을 직접 구현
 	private String id;
     private MqttClient client;
-    private boolean collectorMode;
+    private boolean DBServerMode;
     private final String broker = "tcp://localhost:1883";
     private final String pubTopic = "/smartfarm/sensor/"; // 유저, 기계 식별 앞에 붙이기
     private final String subTopic = "/smartfarm/#"; // {유저}/smartfarm 하위의 모든 토픽을 구독
@@ -47,11 +47,11 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
             me.printStackTrace();
         }
     }
-    public MqttManager(boolean collectorMode) {//수집기 모드 생성자
+    public MqttManager(boolean DBServerMode) {//수집기 모드 생성자
         try {
-        	this.collectorMode = collectorMode;
+        	this.DBServerMode = DBServerMode;
             // 고유한 클라이언트 ID 생성 (충돌 방지)
-            String clientId = "collector";
+            String clientId = "DBServer"+ UUID.randomUUID().toString();
             client = new MqttClient(broker, clientId);
 
             // 연결 옵션 설정
@@ -76,8 +76,9 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     // 구독을 처리하는 메소드
     private void subscribe() {
         try {
-            if (collectorMode) {
-                this.client.subscribe("+/smartfarm/+/sensor/data", 1);
+            if (DBServerMode) {
+                this.client.subscribe("+/smartfarm/+/sensor/data", 1); //라즈베리파이로부터 센서 정보 수신
+                this.client.subscribe("+/smartfarm/+/query/#", 1); //유저로부터 쿼리 요청 수신
                 System.out.println("Subscribed to topic: +/smartfarm/+/sensor/data");
             } else {
                 this.client.subscribe(id + subTopic);
