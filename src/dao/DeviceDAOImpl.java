@@ -28,4 +28,27 @@ public class DeviceDAOImpl implements DeviceDAO {
 		}
 		return result;
 	}
+	
+	public int addNewDevice(MemberDTO user, String dsn) {
+		String sql = "UPDATE devices\n"
+	               + "JOIN users ON users.user_id = ?\n"
+			   	   + "SET devices.user_uid = users.user_uid\n"
+	               + "WHERE devices.device_serial_number = ?";
+		Connection con = null;
+		PreparedStatement ptmt = null;
+		int result = 0;
+
+		try {
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+			ptmt.setString(1, user.getUserId());
+			ptmt.setString(2, dsn);
+			result = ptmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(null, ptmt, con);
+		}
+		return result;
+	}
 }
