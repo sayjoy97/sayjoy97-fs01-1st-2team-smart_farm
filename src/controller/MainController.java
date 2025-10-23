@@ -23,7 +23,9 @@ public class MainController {
         while (true) {
             if (currentUser == null) {
                 // 로그인되지 않았을 때의 로직 처리
+            	
                 handleInitialMenu();
+                
             } else {
                 // 로그인된 후의 로직 처리
                 handleMainMenu();
@@ -100,6 +102,8 @@ public class MainController {
                 // 
                 view.showMessage("⚙️ 일림 관리 메뉴입니다.");
                 break;
+            case "5":
+            	view.handleLogin();
             case "8":
                 logout();
                 break;
@@ -138,6 +142,22 @@ public class MainController {
                 view.showMessage("(!) 잘못된 입력입니다.");
         }
     }
+	
+	private void mypage() {
+		while(true) {
+			ConsoleUtils.clearConsole();
+			String choice = view.showMyPageMenu(); // 화면 출력 후 사용자 입력 받기 
+			
+			switch(choice) {
+			case "1":
+				view.showMessage("메인 메뉴로 돌아갑니다");
+				return; 
+			default:
+				view.showMessage("(!) 잘못된 입력입니다. 다시 입력하세요.";
+			}
+			
+		}
+	}
 	
 	private void logout() {
 		if(mqttManager != null) mqttManager.close();

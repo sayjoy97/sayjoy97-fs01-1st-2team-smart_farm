@@ -32,6 +32,7 @@ public class MainView {
 		System.out.println("  [2] 식물 관리 📊");
 		System.out.println("  [3] 마이 페이지 ⚙️");
 		System.out.println("  [4] 알림 관리 ⚙️");
+		System.out.println("  [5] 뒤로 가기");
 		System.out.println("  [8] 로그아웃");
 		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
@@ -153,6 +154,41 @@ public class MainView {
 		System.out.print("> 입력: ");
 		return scanner.nextLine();
 	}
+	
+	public String showMyPageMenu() {
+		System.out.println("=============================");
+	    System.out.println("⚙️  마이페이지 메뉴");
+	    System.out.println("=============================");
+		System.out.println("  [1] 내 정보 조회 ");
+		System.out.println("  [2] 내 정보 수정 ");
+		System.out.println("  [3] 뒤로가기 ");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
+	public String mypageUpdateMenu() {
+		System.out.println("\n 수정할 메뉴를 선택해주세요.\n");
+		System.out.println("  [1] 비밀번호 ");
+		System.out.println("  [2] 이름 ");
+		System.out.println("  [3] 이메일 ");
+		System.out.println("  [4] 뒤로가기 ");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
+	public String mypageSelectMenu() {
+		System.out.println("\n 수정할 메뉴를 선택해주세요.\n");
+		System.out.println("  [1] 비밀번호 ");
+		System.out.println("  [2] 이름 ");
+		System.out.println("  [3] 이메일 ");
+		System.out.println("  [4] 뒤로가기 ");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
+	
+	
+	
 }
 
 
