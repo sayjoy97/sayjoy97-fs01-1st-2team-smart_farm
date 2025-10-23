@@ -76,8 +76,25 @@ public class FarmDAOImpl implements FarmDAO {
 	}
 	
 	public int addFarm(String plantName, String farmUid) {
-		
-	    return 0;
+		String sql = "UPDATE farms\n"
+				   + "SET preset_uid = (select preset_uid from plant_presets where plant_name = ?),\n"
+				   + "    planting_date = CURDATE()\n"
+				   + "WHERE farm_uid = ?";
+	    Connection con = null;
+	    PreparedStatement ptmt = null;
+	    int result = 0;
+	    try {
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+			ptmt.setString(1, plantName);
+			ptmt.setString(2, farmUid);
+			result = ptmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(null, ptmt, con);
+		}
+	    return result;
 	}
 	
 	public ArrayList<FarmDTO> selectDevicesFarm(MemberDTO user) {
