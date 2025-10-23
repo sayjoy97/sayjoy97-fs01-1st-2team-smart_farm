@@ -106,10 +106,11 @@ public class MainView {
 	
 	public String showAddPlantMenu() {
 		System.out.println("\n원하시는 메뉴를 선택해주세요.\n");
-		System.out.println("  [1] 추천 식물 1: 이름");
-		System.out.println("  [2] 추천 식물 2: 이름");
-		System.out.println("  [3] 추천 식물 3: 이름");
-		System.out.println("  [4] 신규 식물 추가");
+		System.out.println("  [1] 추천 식물: 상추");
+		System.out.println("  [2] 추천 식물: 딸기");
+		System.out.println("  [3] 추천 식물: 바질");
+		System.out.println("  [4] 추천 식물: 와사비");
+		System.out.println("  [5] 신규 식물 추가");
 		System.out.println("  [8] 뒤로가기");
 		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
@@ -148,7 +149,7 @@ public class MainView {
 		System.out.println("예상 생장 기간(일): " + presetDTO.getGrowthPeriodDays());
 		value[0] = presetDTO.getPlantName();
 		scanner.nextLine();
-		System.out.print("기기 시리얼 넘버를 입력하세요: ");
+		System.out.print("예상 생장 기간(일): ");
 		value[1] = scanner.nextLine();
 		System.out.print("슬롯 번호를 입력하세요: ");
 		value[2] = scanner.nextLine();
@@ -178,6 +179,21 @@ public class MainView {
 		String dsn =  scanner.nextLine();
 		System.out.println("\n--------------------------------------------------");
 		return dsn;
+	}
+	
+	public String showNotificationManagementMenu(boolean bool) {
+		if (bool) {
+			System.out.println("\n새로운 메시지가 없습니다.");
+			System.out.println("엔터를 눌러주세요.");
+			scanner.nextLine();
+			return "0";
+		} else {
+			System.out.println("\n확인한 메시지의 번호를 입력해주세요.");
+			System.out.println("입력한 번호의 메시지는 삭제됩니다. (예시: 1,3,5)");
+			System.out.println("전체 삭제를 원할 경우 ALL을 입력해주세요.\n");
+			System.out.print("> 입력: ");
+			return scanner.nextLine();
+		}
 	}
 }
 
