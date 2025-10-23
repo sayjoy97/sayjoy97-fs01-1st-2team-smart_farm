@@ -4,7 +4,8 @@
 | 〃                  | 명령 수행 결과 회신       | `{userId}/smartfarm/{farmUid}/ack/{actuatorType}` | —                                                                                       | `user1/smartfarm/101/ack/pump`    | `status:ok,action:on`               | 펌프·팬·LED 등 액추에이터 제어 응답           |
 | **DB 서버 (수집기)**    | 센서 데이터 수신 및 저장    | —                                                 | `+/smartfarm/+/sensor/data`                                                             | `user1/smartfarm/101/sensor/data` | `temp:23.5,hum:60,co2:800,soil:420` | 토픽·페이로드 파싱 후 sensor_logs에 INSERT |
 | 〃                  | 액추에이터 명령 전송(선택)   | `{userId}/smartfarm/{farmUid}/cmd/{actuatorType}` | `{userId}/smartfarm/+/ack/#`                                                            | `user1/smartfarm/101/cmd/pump`    | `action:on,duration:3000`           | QoS 1 권장, ACK 수신으로 상태 확인         |
-| **사용자 앱 (콘솔/GUI)** | 명령 발행 / 실시간 모니터링  | `{userId}/smartfarm/{farmUid}/cmd/{actuatorType}` | `{userId}/smartfarm/+/sensor/data`<br>`{userId}/smartfarm/{farmUid}/ack/{actuatorType}` | `user1/smartfarm/101/cmd/led`     | `action:on,brightness:80`           | 로그인한 사용자 범위의 농장만 구독              |
+| **사용자 앱 (콘솔/GUI)** | 명령 발행 / 실시간 모니터링  | `{userId}/smartfarm/{farmUid}/cmd/{actuatorType}` | `{userId}/smartfarm/+/sensor/data` | `user1/smartfarm/A101:1/cmd/led`    | `action:on,brightness:80`           | 로그인한 사용자 범위의 농장만 구독              |
 
-
-*farmUid는 {deviceUid}/{farmOrder}로 구성됨. deviceUid는 사전 부여된 시리얼 넘버의 성격을 띄고, farmOrder는 1, 2, 3, 4 등의 값을 가질 수 있으며 각각 1번째 칸, 2번째 칸, 3번째 칸, 4번째 칸 등을 의미함.
+*명령 예시) (user1의 A101디바이스의 1번째 칸의 led에게 밝기를 80으로 명령) 토픽: `user1/smartfarm/A101:1/cmd/led` 페이로드: `action:on,brightness:80` 
+*farmUid는 {deviceUid}:{farmOrder}로 구성됨. deviceUid는 사전 부여된 시리얼 넘버의 성격을 띄고, farmOrder는 1, 2, 3, 4 등의 값을 가질 수 있으며 각각 1번째 칸, 2번째 칸, 3번째 칸, 4번째 칸 등을 의미함.
+*actuatorType의 경우 라즈베리파이 핀 번호로 구별된다. ex) 13번 핀 - LED, 24번 핀 - 펌프 등
