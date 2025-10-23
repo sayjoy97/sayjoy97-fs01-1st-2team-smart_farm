@@ -1,12 +1,13 @@
 package service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import dto.SensorDataDTO;
 
 public interface SensorDataService {
 	 int insertSensorData(SensorDataDTO data);
-	 SensorDataDTO getLatestLog(int farmUid);
-	 ArrayList<SensorDataDTO> getLogsByFarm(int farmUid);
+	 List<SensorDataDTO> getLogsByFarm(String farmUid, Integer hours, Integer limit);
+	 List<SensorDataDTO> getLogsByUser(int userUid, Integer hours, Integer limit);
+	 
 	 void saveData(String topic, String payload);
 }

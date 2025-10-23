@@ -31,7 +31,7 @@ public class MemberDAOImpl implements MemberDAO {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			DBUtil.close(null, ptmt, con);
 		}
 		return result;
@@ -59,7 +59,7 @@ public class MemberDAOImpl implements MemberDAO {
 			}
 		}  catch (SQLException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			DBUtil.close(rs, ptmt, con);
 		}
 		return loginSuccessUser;

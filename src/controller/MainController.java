@@ -10,6 +10,10 @@ import dto.MemberDTO;
 import dto.PresetDTO;
 import dto.UserSessionDTO;
 import mqtt.MqttManager;
+import service.DeviceService;
+import service.DeviceServiceImpl;
+import service.FarmService;
+import service.FarmServiceImpl;
 import service.MemberService;
 import service.MemberServiceImpl;
 import service.PlantService;
@@ -20,7 +24,6 @@ import view.MainView;
 public class MainController {
 	private UserSessionDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainView view = new MainView(); // 화면을 담당할 View 객체
-    private final MemberService service = new MemberServiceImpl();
     private final MemberService service = new MemberServiceImpl();
     private MqttManager mqttManager;
     public void run() {
@@ -73,11 +76,14 @@ public class MainController {
 		ConsoleUtils.clearConsole();
         // View에 현재 사용자 이름을 넘겨주어 메뉴를 보여주게 함
         MemberDTO user = view.showRegistrationForm();
+        FarmService farmService = new FarmServiceImpl();
+        DeviceService deviceService = new DeviceServiceImpl();
         int result = service.register(user);
         new Thread(() -> {
             if (result >= 1) {
                 JOptionPane.showMessageDialog(null, "회원가입이 완료됐습니다.");
-                service.addDevice(user);
+                deviceService.addDevice(user);
+                farmService.createFarm(user);
             } else {
                 JOptionPane.showMessageDialog(null, "회원가입에 실패했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
             }
@@ -100,6 +106,7 @@ public class MainController {
             case "3":
                 // configureSettings();
                 view.showMessage("⚙️ 마이페이지 메뉴입니다.");
+                handleMyPageMenu();
                 break;
             case "4":
                 // 
@@ -119,11 +126,15 @@ public class MainController {
 	private void handleAddPlantMenu() {
         String choice = view.showAddPlantMenu();
         PlantService plantService = new PlantServiceImpl();
-        String yn = "";
+        FarmService farmService = new FarmServiceImpl();
+        String[] value = new String[2];
         switch (choice) {
             case "1":
                 view.showMessage("추천 식물 1입니다.");
-                yn = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                if (value[3].equals("1")) {
+                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                }
                 break;
             case "2":
                 view.showMessage("추천 식물 2입니다.");
@@ -135,6 +146,7 @@ public class MainController {
                 view.showInsertMessage("신규 식물의 프리세을 설정해 주세요.");
                 PresetDTO presetDTO = view.showAddNewPlantMenu();
                 plantService.addCustomPreset(presetDTO);
+                view.showPresetMenu(presetDTO);
                 break;
             case "8":
             	handleMainMenu();
@@ -143,38 +155,28 @@ public class MainController {
                 view.showMessage("(!) 잘못된 입력입니다.");
         }
     }
-	
-	
-	private void handlePlantInfoMenu(MemberDTO user) {
-		ArrayList<DeviceDTO> devices = selectUserDevices(user);
-		
-        String choice = view.showAddPlantMenu();
-        PlantService plantService = new PlantServiceImpl();
-        String yn = "";
-        switch (choice) {
-            case "1":
-                view.showMessage("현재 내 기기 ");
-                yn = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
-                break;
-            case "2":
-                view.showMessage("추천 식물 2입니다.");
-                break;
-            case "3":
-                view.showMessage("추천 식물 3입니다.");
-                break;
-            case "4":
-                view.showInsertMessage("신규 식물의 프리세을 설정해 주세요.");
-                PresetDTO presetDTO = view.showAddNewPlantMenu();
-                plantService.addCustomPreset(presetDTO);
-                break;
-            case "8":
-            	handleMainMenu();
-                break;
-            default:
-                view.showMessage("(!) 잘못된 입력입니다.");
-        }
-    }
-	
+
+	private void handleMyPageMenu() {
+		String choice = view.showMyPageMenu();
+		switch (choice) {
+        case "1":
+            view.showMessage("기기 추가입니다.");
+            String dsn = view.showAddDevice();
+            DeviceService deviceService = new DeviceServiceImpl();
+            FarmService farmService = new FarmServiceImpl();
+            deviceService.addNewDevice(currentUser.getLoginUser(), dsn);
+            farmService.createFarm(currentUser.getLoginUser(), dsn);
+            break;
+        case "8":
+        	handleMainMenu();
+            break;
+        case "9":
+            break;
+        default:
+            view.showMessage("(!) 잘못된 입력입니다.");
+		}
+	}
+
 	private void logout() {
 		if(mqttManager != null) mqttManager.close();
 		mqttManager = null;
