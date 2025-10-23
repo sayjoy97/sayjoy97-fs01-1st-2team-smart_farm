@@ -47,7 +47,7 @@ public class DeviceDAOImpl implements DeviceDAO {
 			DeviceDTO userDevice = null;
 			while(rs.next()) {
 				userDevice = new DeviceDTO(
-					    rs.getString("serial_number"),
+					    rs.getString("device_serial_number"),
 					    rs.getInt("user_uid"),
 					    rs.getInt("spec_uid")
 					);
@@ -59,7 +59,9 @@ public class DeviceDAOImpl implements DeviceDAO {
 		}finally {
 			DBUtil.close(rs, ptmt, con);
 		}
-		return devices;}
+		return devices;
+		
+	}
 	
 	
 	public int addNewDevice(MemberDTO user, String dsn) {

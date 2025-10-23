@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import dto.DeviceDTO;
+import dto.FarmDTO;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 import dto.PresetDTO;
@@ -25,6 +26,9 @@ public class MainController {
 	private UserSessionDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainView view = new MainView(); // 화면을 담당할 View 객체
     private final MemberService service = new MemberServiceImpl();
+    private final DeviceServiceImpl deviceService = new DeviceServiceImpl();
+    private final FarmService farmService = new FarmServiceImpl();
+    MemberDTO loginSuccessUser = null;
     private MqttManager mqttManager;
     public void run() {
         while (true) {
@@ -59,7 +63,7 @@ public class MainController {
     	ConsoleUtils.clearConsole();
     	
     	LoginUserDTO loginUser = view.handleLogin();
-    	MemberDTO loginSuccessUser = service.login(loginUser.getUserId(),
+    	loginSuccessUser = service.login(loginUser.getUserId(),
     									loginUser.getPassword());
     	//로그인 성공하면 세션에 로그인사용자정보를 담고 Mqtt Subscriber를 실행함
 		if(loginSuccessUser!=null) {
@@ -76,8 +80,7 @@ public class MainController {
 		ConsoleUtils.clearConsole();
         // View에 현재 사용자 이름을 넘겨주어 메뉴를 보여주게 함
         MemberDTO user = view.showRegistrationForm();
-        FarmService farmService = new FarmServiceImpl();
-        DeviceService deviceService = new DeviceServiceImpl();
+
         int result = service.register(user);
         new Thread(() -> {
             if (result >= 1) {
@@ -101,7 +104,7 @@ public class MainController {
             case "2":
                 //analyzeSensorData();
                 view.showMessage("📊 식물 관리 메뉴입니다.");
-                
+                handleManagePlantMenu();
                 break;
             case "3":
                 // configureSettings();
@@ -155,7 +158,24 @@ public class MainController {
                 view.showMessage("(!) 잘못된 입력입니다.");
         }
     }
+	
+	private void handleManagePlantMenu() {
+		ArrayList<FarmDTO> farms = farmService.selectDevicesFarm(loginSuccessUser);
+	    String choice = view.showMyFarmsMenu(farms);
 
+
+	    int choiceNum = Integer.parseInt(choice);
+
+	     if (choiceNum == 8) {
+	              handleMainMenu();
+	   } else if (choiceNum == 9) {
+	                view.showMessage("프로그램을 종료합니다.");
+	    } else {
+	                view.showMessage("(!) 잘못된 입력입니다.");
+	            }
+	        }
+
+	
 	private void handleMyPageMenu() {
 		String choice = view.showMyPageMenu();
 		switch (choice) {

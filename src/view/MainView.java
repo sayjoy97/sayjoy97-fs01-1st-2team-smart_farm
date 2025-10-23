@@ -1,15 +1,24 @@
 package view;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
+import dto.DeviceDTO;
+import dto.FarmDTO;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 import dto.PresetDTO;
+import service.FarmService;
+import service.FarmServiceImpl;
+import service.PlantService;
+import service.PlantServiceImpl;
+import service.SensorDataService;
+import service.SensorDataServiceImpl;
 import util.ConsoleUtils;
 
 public class MainView {
 	private static final Scanner scanner = new Scanner(System.in);
-
+	
 	public String showInitialMenu() {
 		System.out.println("\n==================================================");
 		System.out.println("      🌿 라즈베리파이 스마트팜 제어 시스템 🌿");
@@ -117,20 +126,31 @@ public class MainView {
 		return scanner.nextLine();
 	}
 	
-	public String showMyDevicesMenu() {
-		
-		System.out.println("\n기기를 선택하시오.\n");
-		System.out.println("  [1] 추천 식물 1: 이름");
-		System.out.println("  [2] 추천 식물 2: 이름");
-		System.out.println("  [3] 추천 식물 3: 이름");
-		System.out.println("  [4] 신규 식물 추가");
+	public String showMyDevicesMenu(ArrayList<DeviceDTO> devices) {
+		System.out.println("\n농장 정보.\n");
+		int i = 1;
+		for(DeviceDTO device:devices) {
+			System.out.println("  ["+i+"] "+device.getDeviceSerialNumber());
+		}
 		System.out.println("  [8] 뒤로가기");
 		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
 		System.out.print("> 입력: ");
 		return scanner.nextLine();
 	}
-	
+	public String showMyFarmsMenu(ArrayList<FarmDTO> farms) {
+	    SensorDataService sensorDataService = new SensorDataServiceImpl();
+
+		System.out.println("\n모든 농장 현재상태.\n");
+		for(FarmDTO farm:farms) {
+			System.out.println(sensorDataService.getLogsByFarm(farm.getFarmUid(),1,1));
+		}
+		System.out.println("  [8] 뒤로가기");
+		System.out.println("  [9] 프로그램 종료");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
 	public PresetDTO showAddNewPlantMenu() {
 		PresetDTO presetDTO = new PresetDTO();
 		System.out.print("식물 이름: ");
