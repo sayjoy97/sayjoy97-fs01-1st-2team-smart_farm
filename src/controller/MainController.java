@@ -1,7 +1,10 @@
 package controller;
 
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
+import dto.DeviceDTO;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 import dto.PresetDTO;
@@ -17,6 +20,7 @@ import view.MainView;
 public class MainController {
 	private UserSessionDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainView view = new MainView(); // 화면을 담당할 View 객체
+    private final MemberService service = new MemberServiceImpl();
     private final MemberService service = new MemberServiceImpl();
     private MqttManager mqttManager;
     public void run() {
@@ -89,8 +93,9 @@ public class MainController {
                 handleAddPlantMenu();
                 break;
             case "2":
-                // analyzeSensorData();
+                //analyzeSensorData();
                 view.showMessage("📊 식물 관리 메뉴입니다.");
+                
                 break;
             case "3":
                 // configureSettings();
@@ -118,6 +123,37 @@ public class MainController {
         switch (choice) {
             case "1":
                 view.showMessage("추천 식물 1입니다.");
+                yn = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                break;
+            case "2":
+                view.showMessage("추천 식물 2입니다.");
+                break;
+            case "3":
+                view.showMessage("추천 식물 3입니다.");
+                break;
+            case "4":
+                view.showInsertMessage("신규 식물의 프리세을 설정해 주세요.");
+                PresetDTO presetDTO = view.showAddNewPlantMenu();
+                plantService.addCustomPreset(presetDTO);
+                break;
+            case "8":
+            	handleMainMenu();
+                break;
+            default:
+                view.showMessage("(!) 잘못된 입력입니다.");
+        }
+    }
+	
+	
+	private void handlePlantInfoMenu(MemberDTO user) {
+		ArrayList<DeviceDTO> devices = selectUserDevices(user);
+		
+        String choice = view.showAddPlantMenu();
+        PlantService plantService = new PlantServiceImpl();
+        String yn = "";
+        switch (choice) {
+            case "1":
+                view.showMessage("현재 내 기기 ");
                 yn = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 break;
             case "2":

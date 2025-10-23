@@ -117,6 +117,20 @@ public class MainView {
 		return scanner.nextLine();
 	}
 	
+	public String showMyDevicesMenu() {
+		
+		System.out.println("\n기기를 선택하시오.\n");
+		System.out.println("  [1] 추천 식물 1: 이름");
+		System.out.println("  [2] 추천 식물 2: 이름");
+		System.out.println("  [3] 추천 식물 3: 이름");
+		System.out.println("  [4] 신규 식물 추가");
+		System.out.println("  [8] 뒤로가기");
+		System.out.println("  [9] 프로그램 종료");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
+	
 	public PresetDTO showAddNewPlantMenu() {
 		PresetDTO presetDTO = new PresetDTO();
 		System.out.print("식물 이름: ");
