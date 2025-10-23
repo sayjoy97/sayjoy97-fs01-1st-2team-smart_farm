@@ -123,7 +123,7 @@ public class MainController {
         String choice = view.showAddPlantMenu();
         PlantService plantService = new PlantServiceImpl();
         FarmService farmService = new FarmServiceImpl();
-        String[] value = new String[2];
+        String[] value = new String[4];
         switch (choice) {
             case "1":
                 view.showMessage("추천 식물 1입니다.");
@@ -139,10 +139,14 @@ public class MainController {
                 view.showMessage("추천 식물 3입니다.");
                 break;
             case "4":
-                view.showInsertMessage("신규 식물의 프리세을 설정해 주세요.");
+                view.showInsertMessage("신규 식물의 프리셋을 설정해 주세요.");
                 PresetDTO presetDTO = view.showAddNewPlantMenu();
                 plantService.addCustomPreset(presetDTO);
-                view.showPresetMenu(presetDTO);
+                view.showInsertMessage("기기 시리얼 넘버와 슬롯 번호를 설정해 주세요.");
+                value = view.showPresetMenu(presetDTO);
+                if (value[3].equals("1")) {
+                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                }
                 break;
             case "8":
             	handleMainMenu();

@@ -138,16 +138,17 @@ public class MainView {
 	}
 	
 	public String[] showPresetMenu(PresetDTO presetDTO) {
-		String[] value = new String[3];  // value[0]: (식물 이름) / value[1]: (기기 시리얼 넘버) / value[2]: (슬롯번호) / value[3]: 1(확인), 2(취소)
+		String[] value = new String[4];  // value[0]: (식물 이름) / value[1]: (기기 시리얼 넘버) / value[2]: (슬롯번호) / value[3]: 1(확인), 2(취소)
 		System.out.println("식물 이름: " + presetDTO.getPlantName());
-		value[0] = presetDTO.getPlantName();
 		System.out.println("적정 온도: " + presetDTO.getOptimalTemp());
 		System.out.println("적정 습도: " + presetDTO.getOptimalHumidity());
 		System.out.println("적정 조도: " + presetDTO.getLightIntensity());
 		System.out.println("적정 CO2농도: " + presetDTO.getCo2Level());
 		System.out.println("적정 토양 습도: " + presetDTO.getSoilMoisture());
 		System.out.println("예상 생장 기간(일): " + presetDTO.getGrowthPeriodDays());
-		System.out.println("기기 시리얼 넘버를 입력하세요: ");
+		value[0] = presetDTO.getPlantName();
+		scanner.nextLine();
+		System.out.print("기기 시리얼 넘버를 입력하세요: ");
 		value[1] = scanner.nextLine();
 		System.out.print("슬롯 번호를 입력하세요: ");
 		value[2] = scanner.nextLine();
