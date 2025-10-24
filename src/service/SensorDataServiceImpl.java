@@ -15,7 +15,7 @@ public class SensorDataServiceImpl implements SensorDataService{
 		try {
 		// 1. 토픽 파싱
         String[] parts = topic.split("/");
-        String farmUid = parts[1]; //토픽 구조 예시: "farm/1/sensor" -> 첫번째 자리에 들어감 
+        String farmUid = parts[2]; //토픽 구조 예시: "{userId}/smartfarm/{farmUid}/sensor/data" -> 세번째 자리에 들어감 
         float temp = 0, humidity = 0, co2 = 0, soil = 0;
         
         // 2. payload 구조 (예: "temp=23.5;hum=60;co2=800;soil=420;")

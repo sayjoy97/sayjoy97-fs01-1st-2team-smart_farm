@@ -1,5 +1,6 @@
 package mqtt;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -10,6 +11,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import dto.PresetDTO;
+import service.NotificationService;
+import service.NotificationServiceImpl;
 import service.SensorDataService;
 import service.SensorDataServiceImpl;
 
@@ -21,6 +24,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     private String pubTopic; // 유저, 기계 식별 앞에 붙이기
     private String subTopic; // {유저}/smartfarm 하위의 모든 토픽을 구독
     private SensorDataService service = new SensorDataServiceImpl();
+    private NotificationService serviceNL = new NotificationServiceImpl();
 
     public String getPubTopic() {
 		return pubTopic;
@@ -98,6 +102,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
         try {
             if (DBServerMode) {
                 this.client.subscribe("+/smartfarm/+/sensor/data", 1); //라즈베리파이로부터 센서 정보 수신
+                this.client.subscribe("+/smartfarm/+/sensor/data", 1);
                 System.out.println("Subscribed to topic: +/smartfarm/+/sensor/data");
             } else {
             	setSubTopic();
@@ -180,11 +185,15 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
 //        System.out.println(" Topic: " + topic);
 //        System.out.println(" Message: " + new String(message.getPayload()));
 //        System.out.println("=============================================");
-        if(topic.contains("sensor")) {
-        	if(topic.endsWith("dht11")) {
-        		service.saveData(topic, new String(message.getPayload()));
-        	}
+    	String msg = new String(message.getPayload());
+        String[] parts = topic.split("/");
+        if(parts[-1] == "nl") {
+        	serviceNL.saveData(topic,msg , LocalDate.now());
+        }else {
+        	service.saveData(topic, msg);
         }
+    	
+    	
     }
 
     @Override

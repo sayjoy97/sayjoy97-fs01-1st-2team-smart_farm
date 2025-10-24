@@ -1,13 +1,17 @@
 package dao;
 
+import java.security.Timestamp;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import dto.MemberDTO;
+import dto.PresetDTO;
 import util.DBUtil;
 
 public class NotificationDAOImpl implements NotificationDAO {
@@ -86,4 +90,28 @@ public class NotificationDAOImpl implements NotificationDAO {
 	    }
 	    return returnValue;
 	}
+
+	@Override
+	public int addNL(String deviceSerialNumber, String payload, LocalDate recordedAt) {
+		
+		String sql = "insert into notification_logs values(null,?,?,?)";
+		Connection con = null;
+		PreparedStatement ptmt = null;
+		int result = 0;
+		try {
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+			ptmt.setString(1, deviceSerialNumber);
+			ptmt.setString(2, payload);
+			ptmt.setDate(3, java.sql.Date.valueOf(recordedAt));
+			result = ptmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(null, ptmt, con);
+		}
+		return result;
+	}
+
+	
 }
