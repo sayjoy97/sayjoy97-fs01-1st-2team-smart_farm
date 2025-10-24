@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import dao.FarmDAO;
 import dao.FarmDAOImpl;
-import dto.DeviceDTO;
 import dto.FarmDTO;
 import dto.MemberDTO;
+import mqtt.MqttManager;
 
 public class FarmServiceImpl implements FarmService {
 	FarmDAO farmDAO = new FarmDAOImpl();
