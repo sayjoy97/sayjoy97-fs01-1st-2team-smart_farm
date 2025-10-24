@@ -64,4 +64,30 @@ public class MemberDAOImpl implements MemberDAO {
 		}
 		return loginSuccessUser;
 	}
+	@Override
+	public void updateUserInfo(int userUid, String column, String newValue) {
+	    String sql = "UPDATE users SET " + column + " = ? WHERE user_uid = ?";
+	    Connection con = null;
+	    PreparedStatement ptmt = null;
+
+	    try {
+	        con = DBUtil.getConnect();
+	        ptmt = con.prepareStatement(sql);
+	        ptmt.setString(1, newValue);
+	        ptmt.setInt(2, userUid);
+
+	        int result = ptmt.executeUpdate();
+
+	        if (result > 0) {
+	            System.out.println("✅ 사용자 정보가 성공적으로 수정되었습니다.");
+	        } else {
+	            System.out.println("⚠️ 해당 사용자를 찾을 수 없습니다.");
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBUtil.close(null, ptmt, con);
+	    }
+	}
 }
