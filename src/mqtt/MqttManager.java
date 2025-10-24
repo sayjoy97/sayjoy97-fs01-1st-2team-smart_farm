@@ -9,6 +9,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import dto.PresetDTO;
 import service.SensorDataService;
 import service.SensorDataServiceImpl;
 
@@ -39,6 +40,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
 	public void setSubTopic() {
 		this.subTopic = id+"/smartfarm/+/sensor/data";
 	}
+	
 	public MqttManager(String id) {//사용자 모드 생성자
     	this.id = id;
         try {
@@ -114,6 +116,25 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
             MqttMessage message = new MqttMessage(cmd.getBytes());
             message.setQos(0); // QoS Level 0
             this.client.publish(id+"/smartfarm/"+farmUid+"/cmd/"+actuatorType, message);
+            System.out.println("Message published.");
+        } catch (MqttException me) {
+            me.printStackTrace();
+        }
+    }
+    //라즈베리파이에 프리셋 적용시키기 위한 정보를 보내는 발행
+    public void publish(String farmUid, PresetDTO preset) {
+        try {
+            System.out.println(farmUid+"에 프리셋을 세팅합니다.");
+            
+            String presetmsg = "Co2Level="+String.valueOf(preset.getCo2Level())
+            		+";LightIntensity="+ String.valueOf(preset.getLightIntensity())
+            		+ ";OptimalHumidity="+String.valueOf(preset.getOptimalHumidity())
+            		+ ";OptimalTemp="+String.valueOf(preset.getOptimalTemp())
+            		+ ";SoilMoisture="+String.valueOf(preset.getSoilMoisture());
+
+            MqttMessage message = new MqttMessage(presetmsg.getBytes());
+            message.setQos(1); // QoS Level 1
+            this.client.publish(id+"/smartfarm/"+farmUid+"/cmd/", message);
             System.out.println("Message published.");
         } catch (MqttException me) {
             me.printStackTrace();
