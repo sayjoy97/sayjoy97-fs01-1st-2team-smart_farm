@@ -19,4 +19,10 @@ public class MemberServiceImpl implements MemberService {
 		System.out.println(user);
 		return user;
 	}
+
+	@Override
+	public void updateUserInfo(int userUid, String string, String newPw) {
+		memberDAO.updateUserInfo(userUid, string, newPw);
+		
+	}
 }

@@ -20,7 +20,8 @@ public class DeviceServiceImpl implements DeviceService {
 		return result;
 	}
 	
-	public ArrayList<DeviceDTO> selectUserDevices(MemberDTO user) {
+	public ArrayList<DeviceDTO> selectUserDevices(MemberDTO user){
+
 		return deviceDAO.selectUserDevices(user);
 	}
 	
