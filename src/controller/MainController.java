@@ -198,12 +198,21 @@ public class MainController {
 		String choice = view.showMyPageMenu();
 		switch (choice) {
         case "1":
-            view.showMessage("기기 추가입니다.");
+            // 여기에 정보 조회하는 메서드 호출하면 될 듯
+            break;
+        case "2":
+            break;
+        case "3":
+        	view.showMessage("기기 추가입니다.");
             String dsn = view.showAddDevice();
             DeviceService deviceService = new DeviceServiceImpl();
             FarmService farmService = new FarmServiceImpl();
             deviceService.addNewDevice(currentUser.getLoginUser(), dsn);
             farmService.createFarm(currentUser.getLoginUser(), dsn);
+            break;
+        case "4":
+        	view.showMessage("기기 삭제입니다.");
+        	
             break;
         case "8":
         	handleMainMenu();
