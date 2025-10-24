@@ -1,22 +1,22 @@
 package dto;
 
 public class DeviceDTO {
-	private int deviceSerialNumber;
+	private String deviceSerialNumber;
 	private int userUid;
 	private int specUid;
 	
 	public DeviceDTO() {
 	}
-	public DeviceDTO(int deviceSerialNumber, int userUid, int specUid) {
+	public DeviceDTO(String deviceSerialNumber, int userUid, int specUid) {
 		super();
 		this.deviceSerialNumber = deviceSerialNumber;
 		this.userUid = userUid;
 		this.specUid = specUid;
 	}
-	public int getDeviceSerialNumber() {
+	public String getDeviceSerialNumber() {
 		return deviceSerialNumber;
 	}
-	public void setDeviceSerialNumber(int deviceSerialNumber) {
+	public void setDeviceSerialNumber(String deviceSerialNumber) {
 		this.deviceSerialNumber = deviceSerialNumber;
 	}
 	public int getUserUid() {
