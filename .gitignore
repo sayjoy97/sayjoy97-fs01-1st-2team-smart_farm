@@ -1,6 +1,5 @@
 # ---- Java & Common Build ----
 *.class
-*.classpath
 *.jar
 *.war
 *.ear
