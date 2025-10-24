@@ -1,15 +1,22 @@
 package view;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+import dto.DeviceDTO;
+import dto.FarmDTO;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
 import dto.PresetDTO;
+import dto.SensorDataDTO;
+import service.SensorDataService;
+import service.SensorDataServiceImpl;
 import util.ConsoleUtils;
 
 public class MainView {
 	private static final Scanner scanner = new Scanner(System.in);
-
+	
 	public String showInitialMenu() {
 		System.out.println("\n==================================================");
 		System.out.println("      🌿 라즈베리파이 스마트팜 제어 시스템 🌿");
@@ -118,6 +125,31 @@ public class MainView {
 		return scanner.nextLine();
 	}
 	
+	public String showMyDevicesMenu(ArrayList<DeviceDTO> devices) {
+		System.out.println("\n농장 정보.\n");
+		int i = 1;
+		for(DeviceDTO device:devices) {
+			System.out.println("  ["+i+"] "+device.getDeviceSerialNumber());
+		}
+		System.out.println("  [8] 뒤로가기");
+		System.out.println("  [9] 프로그램 종료");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
+	public String showMyFarmsMenu(ArrayList<FarmDTO> farms) {
+		System.out.println("\n내 농장 목록을 선택해주세요.\n");
+		int i = 1;
+		for(FarmDTO farm:farms) {
+			System.out.println("  ["+i+"] Farm ID: " + farm.getFarmUid());
+			i++;
+		}
+		System.out.println("  [8] 뒤로가기");
+		System.out.println("  [9] 프로그램 종료");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
 	public PresetDTO showAddNewPlantMenu() {
 		PresetDTO presetDTO = new PresetDTO();
 		System.out.print("식물 이름: ");
@@ -177,20 +209,154 @@ public class MainView {
 	}
 	
 	public String showAddDevice() {
-		System.out.println("\n추가할 기기의 시리얼 넘버를 입력해주세요.\n");
+		System.out.println("\n추가할 기기의 시리얼 넘버를 입력해주세요.");
 		System.out.print("  기기 시리얼 넘버: ");
 		String dsn =  scanner.nextLine();
 		System.out.println("\n--------------------------------------------------");
 		return dsn;
 	}
 	
-	public String showDeleteDevice() {
-		System.out.println("\n삭제할 기기의 시리얼 넘버를 입력해주세요.\n");
+	public int showDeleteDevice() {
+		System.out.println("\n삭제할 기기의 번호를 입력해주세요.");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextInt();
+	}
+	
+	public void showFarmDetail(FarmDTO farm, PresetDTO preset, SensorDataDTO latestData) {
+		System.out.println("\n==================================================");
+		System.out.println("농장 상세 정보");
+		System.out.println("==================================================");
+		System.out.println("\nFarm ID: " + farm.getFarmUid());
+		
+		if(preset != null && preset.getPlantName() != null) {
+			System.out.println("식물: " + preset.getPlantName());
+		} else {
+			System.out.println("식물: 정보 없음");
+		}
+		
+		if(farm.getPlanting_date() != null) {
+			System.out.println(" 심은 날짜: " + farm.getPlanting_date());
+			long diff = System.currentTimeMillis() - farm.getPlanting_date().getTime();
+			long days = diff / (1000 * 60 * 60 * 24);
+			System.out.println("  경과 일수: " + days + "일");
+		}
+		
+		System.out.println(" 현재 센서 측정값 (최근 기록)");
+		System.out.println("--------------------------------------------------");
+		
+		if(latestData != null) {
+			System.out.println(" 측정 시간: " + latestData.getRecordedAt());
+			
+			// 온도
+			if(latestData.getMeasuredTemp() != null) {
+				System.out.print("  온도: " + latestData.getMeasuredTemp() + "°C");
+				if(preset != null && preset.getOptimalTemp() > 0) {
+					System.out.print("    [적정: " + preset.getOptimalTemp() + "°C]");
+					float diff = Math.abs(latestData.getMeasuredTemp() - preset.getOptimalTemp());
+					if(diff <= 2.0) {
+						System.out.println(" 정상");
+					} else if(diff <= 5.0) {
+						System.out.println(" 주의");
+					} else {
+						System.out.println(" 위험");
+					}
+				} else {
+					System.out.println();
+				}
+			}
+			
+			// 습도
+			if(latestData.getMeasuredHumidity() != null) {
+				System.out.print(" 습도: " + latestData.getMeasuredHumidity() + "%");
+				if(preset != null && preset.getOptimalHumidity() > 0) {
+					System.out.print("        [적정: " + preset.getOptimalHumidity() + "%]");
+					float diff = Math.abs(latestData.getMeasuredHumidity() - preset.getOptimalHumidity());
+					if(diff <= 5.0) {
+						System.out.println(" 정상");
+					} else if(diff <= 10.0) {
+						System.out.println(" 주의");
+					} else {
+						System.out.println(" 위험");
+					}
+				} else {
+					System.out.println();
+				}
+			}
+			
+			// CO2
+			if(latestData.getMeasuredCo2() != null) {
+				System.out.print(" CO2: " + latestData.getMeasuredCo2() + "ppm");
+				if(preset != null && preset.getCo2Level() > 0) {
+					System.out.print("    [적정: " + preset.getCo2Level() + "ppm]");
+					float diff = Math.abs(latestData.getMeasuredCo2() - preset.getCo2Level());
+					if(diff <= 50.0) {
+						System.out.println("정상");
+					} else if(diff <= 100.0) {
+						System.out.println("주의");
+					} else {
+						System.out.println("위험");
+					}
+				} else {
+					System.out.println();
+				}
+			}
+			
+			// 토양 습도
+			if(latestData.getMeasuredSoilMoisture() != null) {
+				System.out.print(" 토양습도: " + latestData.getMeasuredSoilMoisture());
+				if(preset != null && preset.getSoilMoisture() > 0) {
+					System.out.print("    [적정: " + preset.getSoilMoisture() + "]");
+					float diff = Math.abs(latestData.getMeasuredSoilMoisture() - preset.getSoilMoisture());
+					if(diff <= 20.0) {
+						System.out.println("정상");
+					} else if(diff <= 50.0) {
+						System.out.println("주의");
+					} else {
+						System.out.println("위험");
+					}
+				} else {
+					System.out.println();
+				}
+			}
+		} else {
+			System.out.println("  (!) 센서 데이터가 없습니다.");
+		}
+		
+		System.out.println();
+	}
+	
+	public String showFarmDetailMenu() {
+		System.out.println("\n원하시는 메뉴를 선택해주세요.\n");
+		System.out.println("  [1] 센서 데이터 목록 보기 (최근 10개)");
+		System.out.println("  [8] 뒤로가기");
+		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
 		System.out.print("> 입력: ");
 		return scanner.nextLine();
 	}
 	
+	public void showSensorDataList(String farmUid) {
+		SensorDataService sensorDataService = new SensorDataServiceImpl();
+		System.out.println("\n==================================================");
+		System.out.println("센서 데이터 기록 (최근 10개)");
+		System.out.println("==================================================\n");
+		
+		List<SensorDataDTO> dataList = sensorDataService.getLogsByFarm(farmUid, 24, 10);
+		
+		if(dataList != null && !dataList.isEmpty()) {
+			for(SensorDataDTO data : dataList) {
+				System.out.println("기록시각각 " + data.getRecordedAt());
+				System.out.println(" 온도: " + data.getMeasuredTemp() + "°C" +
+						         "  습도: " + data.getMeasuredHumidity() + "%" +
+						         "  CO2: " + data.getMeasuredCo2() + "ppm" +
+						         "   토양: " + data.getMeasuredSoilMoisture());
+				System.out.println();
+			}
+		} else {
+			System.out.println("  (!) 센서 데이터가 없습니다.\n");
+		}
+	}
 	public String showNotificationManagementMenu(boolean bool) {
 		if (bool) {
 			System.out.println("\n새로운 메시지가 없습니다.");
