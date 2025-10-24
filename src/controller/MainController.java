@@ -224,7 +224,7 @@ public class MainController {
 		
 		// 최근 센서 데이터 조회
 		SensorDataService sensorDataService = new SensorDataServiceImpl();
-		List<SensorDataDTO> latestDataList = sensorDataService.getLogsByFarm(farm.getFarmUid(), 24, 1);
+		List<SensorDataDTO> latestDataList = sensorDataService.getLogsByFarm(farm.getFarmUid(), null, 1);
 		SensorDataDTO latestData = null;
 		if(latestDataList != null && !latestDataList.isEmpty()) {
 			latestData = latestDataList.get(0);

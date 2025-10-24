@@ -1,6 +1,7 @@
 package view;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import dto.DeviceDTO;
@@ -330,7 +331,7 @@ public class MainView {
 		System.out.println("센서 데이터 기록 (최근 10개)");
 		System.out.println("==================================================\n");
 		
-		java.util.List<SensorDataDTO> dataList = sensorDataService.getLogsByFarm(farmUid, 24, 10);
+		List<SensorDataDTO> dataList = sensorDataService.getLogsByFarm(farmUid, 24, 10);
 		
 		if(dataList != null && !dataList.isEmpty()) {
 			for(SensorDataDTO data : dataList) {

@@ -16,7 +16,7 @@ public class DBUtil {
 	}
 	public static Connection getConnect() {
 		Connection con = null;
-		String url = "jdbc:mysql://127.0.0.1:3306/project_smartfarm?serverTimezone=UTC";
+		String url = "jdbc:mysql://127.0.0.1:3306/project_smartfarm?serverTimezone=Asia/Seoul";
 		String user = "sample";
 		String password = "1234";
 		try {
