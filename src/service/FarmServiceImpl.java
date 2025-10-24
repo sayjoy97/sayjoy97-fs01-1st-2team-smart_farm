@@ -27,4 +27,8 @@ public class FarmServiceImpl implements FarmService {
 		// TODO Auto-generated method stub
 		return farmDAO.selectDevicesFarm(user);
 	}
+	
+	public void deleteFarm(String deleteDSN) {
+		farmDAO.deleteFarm(deleteDSN);
+	}
 }

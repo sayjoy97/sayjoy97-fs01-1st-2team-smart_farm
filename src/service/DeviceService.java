@@ -9,4 +9,5 @@ public interface DeviceService {
 	int addDevice(MemberDTO user);
 	int addNewDevice(MemberDTO user, String dsn);
 	ArrayList<DeviceDTO> selectUserDevices(MemberDTO user);
+	void deleteDevice(String deleteDSN);
 }

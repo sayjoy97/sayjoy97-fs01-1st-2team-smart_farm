@@ -63,7 +63,6 @@ public class DeviceDAOImpl implements DeviceDAO {
 		
 	}
 	
-	
 	public int addNewDevice(MemberDTO user, String dsn) {
 		String sql = "UPDATE devices\n"
 	               + "JOIN users ON users.user_id = ?\n"
@@ -78,6 +77,26 @@ public class DeviceDAOImpl implements DeviceDAO {
 			ptmt = con.prepareStatement(sql);
 			ptmt.setString(1, user.getUserId());
 			ptmt.setString(2, dsn);
+			result = ptmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(null, ptmt, con);
+		}
+		return result;
+	}
+	
+	public int deleteDevice(String deleteDSN) {
+		String sql = "UPDATE devices\n"
+			   	   + "SET user_uid = null\n"
+	               + "WHERE device_serial_number = ?";
+		Connection con = null;
+		PreparedStatement ptmt = null;
+		int result = 0;
+		try {
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+			ptmt.setString(1, deleteDSN);
 			result = ptmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

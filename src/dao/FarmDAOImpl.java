@@ -125,7 +125,24 @@ public class FarmDAOImpl implements FarmDAO {
 			DBUtil.close(rs, ptmt, con);
 		}
 		return farms;
-		
 	}
 
+	public int deleteFarm(String deleteDSN) {
+		String sql = "DELETE FROM farms\n"
+				   + "WHERE farm_uid LIKE ?";
+		Connection con = null;
+	    PreparedStatement ptmt = null;
+	    int result = 0;
+	    try {
+	        con = DBUtil.getConnect();
+	        ptmt = con.prepareStatement(sql);
+	        ptmt.setString(1, deleteDSN + "%");
+		    result = ptmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBUtil.close(null, ptmt, con);
+	    }
+		return result;
+	}
 }

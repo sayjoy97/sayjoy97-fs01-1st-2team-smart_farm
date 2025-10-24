@@ -21,8 +21,11 @@ public class DeviceServiceImpl implements DeviceService {
 	}
 	
 	public ArrayList<DeviceDTO> selectUserDevices(MemberDTO user){
+
 		return deviceDAO.selectUserDevices(user);
 	}
 	
-	
+	public void deleteDevice(String deleteDSN) {
+		deviceDAO.deleteDevice(deleteDSN);
+	}
 }

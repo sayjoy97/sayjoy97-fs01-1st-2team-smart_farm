@@ -11,4 +11,5 @@ public interface FarmDAO {
 	int createFarm(MemberDTO user, String dsn);
 	int addFarm(String plantName, String farmUid);
 	ArrayList<FarmDTO> selectDevicesFarm(MemberDTO user);
+	int deleteFarm(String deleteDSN);
 }

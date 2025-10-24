@@ -214,6 +214,14 @@ public class MainView {
 		System.out.println("이름: " + user.getName());
 		System.out.println("이메일: " + user.getEmail());
 		System.out.println("등록된 기기: ");
+
+		System.out.println("\n원하시는 메뉴를 선택해주세요.\n");
+		System.out.println("  [1] 정보 조회");
+		System.out.println("  [2] 정보 수정");
+		System.out.println("  [3] 기기 추가");
+		System.out.println("  [4] 기기 삭제");
+		System.out.println("  [8] 뒤로가기");
+		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
 		if (devices.isEmpty()) {
 	        System.out.println("  (등록된 기기가 없습니다)");
@@ -243,11 +251,18 @@ public class MainView {
 	
 	
 	public String showAddDevice() {
-		System.out.println("\n기기 시리얼 넘버를 입력해주세요.\n");
+		System.out.println("\n추가할 기기의 시리얼 넘버를 입력해주세요.");
 		System.out.print("  기기 시리얼 넘버: ");
 		String dsn =  scanner.nextLine();
 		System.out.println("\n--------------------------------------------------");
 		return dsn;
+	}
+	
+	public int showDeleteDevice() {
+		System.out.println("\n삭제할 기기의 번호를 입력해주세요.");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextInt();
 	}
 	
 	public void showFarmDetail(FarmDTO farm, PresetDTO preset, SensorDataDTO latestData) {
