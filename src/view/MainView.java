@@ -197,7 +197,10 @@ public class MainView {
 	
 	public String showMyPageMenu() {
 		System.out.println("\n원하시는 메뉴를 선택해주세요.\n");
-		System.out.println("  [1] 기기 추가");
+		System.out.println("  [1] 정보 조회");
+		System.out.println("  [2] 정보 수정");
+		System.out.println("  [3] 기기 추가");
+		System.out.println("  [4] 기기 삭제");
 		System.out.println("  [8] 뒤로가기");
 		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
@@ -206,11 +209,18 @@ public class MainView {
 	}
 	
 	public String showAddDevice() {
-		System.out.println("\n기기 시리얼 넘버를 입력해주세요.\n");
+		System.out.println("\n추가할 기기의 시리얼 넘버를 입력해주세요.");
 		System.out.print("  기기 시리얼 넘버: ");
 		String dsn =  scanner.nextLine();
 		System.out.println("\n--------------------------------------------------");
 		return dsn;
+	}
+	
+	public int showDeleteDevice() {
+		System.out.println("\n삭제할 기기의 번호를 입력해주세요.");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextInt();
 	}
 	
 	public void showFarmDetail(FarmDTO farm, PresetDTO preset, SensorDataDTO latestData) {
@@ -345,6 +355,8 @@ public class MainView {
 			}
 		} else {
 			System.out.println("  (!) 센서 데이터가 없습니다.\n");
+		}
+	}
 	public String showNotificationManagementMenu(boolean bool) {
 		if (bool) {
 			System.out.println("\n새로운 메시지가 없습니다.");

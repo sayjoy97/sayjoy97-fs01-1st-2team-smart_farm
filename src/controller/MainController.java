@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
+import dto.DeviceDTO;
 import dto.FarmDTO;
 import dto.LoginUserDTO;
 import dto.MemberDTO;
@@ -32,7 +33,7 @@ public class MainController {
 	private UserSessionDTO currentUser = null; // 현재 로그인한 사용자 정보
     private final MainView view = new MainView(); // 화면을 담당할 View 객체
     private final MemberService service = new MemberServiceImpl();
-    private final DeviceServiceImpl deviceService = new DeviceServiceImpl();
+    private final DeviceService deviceService = new DeviceServiceImpl();
     private final FarmService farmService = new FarmServiceImpl();
     MemberDTO loginSuccessUser = null;
     private MqttManager mqttManager;
@@ -232,14 +233,30 @@ public class MainController {
 	
 	private void handleMyPageMenu() {
 		String choice = view.showMyPageMenu();
+		String dsn = "";
 		switch (choice) {
         case "1":
-            view.showMessage("기기 추가입니다.");
-            String dsn = view.showAddDevice();
-            DeviceService deviceService = new DeviceServiceImpl();
-            FarmService farmService = new FarmServiceImpl();
+            // 여기에 정보 조회하는 메서드 호출하면 될 듯
+            break;
+        case "2":
+            break;
+        case "3":
+        	view.showMessage("기기 추가입니다.");
+            dsn = view.showAddDevice();
             deviceService.addNewDevice(currentUser.getLoginUser(), dsn);
             farmService.createFarm(currentUser.getLoginUser(), dsn);
+            break;
+        case "4":
+        	view.showMessage("기기 삭제입니다.");
+        	ArrayList<DeviceDTO> deviceList = deviceService.selectUserDevices(currentUser.getLoginUser());
+        	for (int i = 0; i < deviceList.size(); i++) {
+        		dsn = deviceList.get(i).getDeviceSerialNumber();
+        		System.out.println("[" + (i + 1) + "] " + dsn);
+        	}
+        	int deleteNum = view.showDeleteDevice();
+        	String DeleteDSN = deviceList.get(deleteNum - 1).getDeviceSerialNumber();
+        	farmService.deleteFarm(DeleteDSN);
+        	deviceService.deleteDevice(DeleteDSN);
             break;
         case "8":
         	handleMainMenu();
