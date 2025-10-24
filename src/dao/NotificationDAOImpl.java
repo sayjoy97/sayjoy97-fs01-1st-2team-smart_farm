@@ -16,7 +16,8 @@ public class NotificationDAOImpl implements NotificationDAO {
 				   + "FROM notification_logs nl\n"
 				   + "JOIN devices d ON nl.device_serial_number = d.device_serial_number\n"
 				   + "JOIN users u ON d.user_uid = u.user_uid\n"
-				   + "WHERE u.user_id = ?;";
+				   + "WHERE u.user_id = ?\n"
+				   + "ORDER BY recorded_at;";
 	    Connection con = null;
 	    PreparedStatement ptmt = null;
 	    ResultSet rs = null;

@@ -17,11 +17,29 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     private MqttClient client;
     private boolean DBServerMode;
     private final String broker = "tcp://localhost:1883";
-    private final String pubTopic = "/smartfarm/sensor/"; // 유저, 기계 식별 앞에 붙이기
-    private final String subTopic = "/smartfarm/#"; // {유저}/smartfarm 하위의 모든 토픽을 구독
+    private String pubTopic; // 유저, 기계 식별 앞에 붙이기
+    private String subTopic; // {유저}/smartfarm 하위의 모든 토픽을 구독
     private SensorDataService service = new SensorDataServiceImpl();
 
-    public MqttManager(String id) {//사용자 모드 생성자
+    public String getPubTopic() {
+		return pubTopic;
+	}
+    
+    //라즈베리파이 명령어 보내기 명령 보낼 대상은 액추에어터 뿐이므로
+	public void setPubTopic(String farmUid, String actuatorType) {
+		this.pubTopic = id+"/smartfarm/"+farmUid+"/cmd/"+actuatorType;
+	}
+	
+	
+	public String getSubTopic() {
+		return subTopic;
+	}
+	
+	//id에 등록된 모든 기기들의 모든 센서 데이터를 받아옴
+	public void setSubTopic() {
+		this.subTopic = id+"/smartfarm/+/sensor/data";
+	}
+	public MqttManager(String id) {//사용자 모드 생성자
     	this.id = id;
         try {
         	
@@ -78,24 +96,37 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
         try {
             if (DBServerMode) {
                 this.client.subscribe("+/smartfarm/+/sensor/data", 1); //라즈베리파이로부터 센서 정보 수신
-                this.client.subscribe("+/smartfarm/+/query/#", 1); //유저로부터 쿼리 요청 수신
                 System.out.println("Subscribed to topic: +/smartfarm/+/sensor/data");
             } else {
-                this.client.subscribe(id + subTopic);
-                System.out.println("Subscribed to topic: " + id + subTopic);
+            	setSubTopic();
+                this.client.subscribe(subTopic);
+                System.out.println("Subscribed to topic: " + subTopic);
             }
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
     
-    // 발행을 처리하는 메소드
-    public void publish(String userId, String device, String content) {
+    // 발행을 처리하는 메소드 {userId}/smartfarm/{farmUid}/cmd/{actuatorType} << 액추에이터 작동 요청
+    public void publish(String farmUid, String actuatorType, String cmd) {
         try {
-            System.out.println("Publishing message: " + content);
-            MqttMessage message = new MqttMessage(content.getBytes());
+            System.out.println(farmUid+"에" + actuatorType+" : "+cmd+" 요청을 보냅니다.");
+            MqttMessage message = new MqttMessage(cmd.getBytes());
             message.setQos(0); // QoS Level 0
-            this.client.publish(userId+device+pubTopic, message); //device 보낼때 앞에 '/'를 붙일 것
+            this.client.publish(id+"/smartfarm/"+farmUid+"/cmd/"+actuatorType, message);
+            System.out.println("Message published.");
+        } catch (MqttException me) {
+            me.printStackTrace();
+        }
+    }
+    //실시간 센서 정보 요청용 퍼블리시 메서드 오버로딩 >> 라즈베리파이에서 info 메세지를 받으면 센서 정보를 읽어서 보내도록 수행해야 하도록 구현해야 함.
+    public void publish() {
+        try {
+        	String cmd = "info";
+            System.out.println("내 농장의 현재 환경 정보 요청을 보냅니다.");
+            MqttMessage message = new MqttMessage(cmd.getBytes());
+            message.setQos(0); // QoS Level 0
+            this.client.publish(id+"/smartfarm/+/cmd/", message);
             System.out.println("Message published.");
         } catch (MqttException me) {
             me.printStackTrace();
