@@ -56,8 +56,7 @@ CREATE TABLE project_smartfarm.plant_presets (
     light_intensity       FLOAT       NOT NULL,
     co2_level             FLOAT       NOT NULL,
     soil_moisture         FLOAT       NOT NULL,
-    growth_period_days    INT         NOT NULL,
-    UNIQUE INDEX plant_name_UNIQUE (plant_name ASC)
+    growth_period_days    INT         NOT NULL
 );
 
 -- ==============================
@@ -94,6 +93,21 @@ CREATE TABLE project_smartfarm.sensor_logs (
     CONSTRAINT fk_sensor_logs_farm
         FOREIGN KEY (farm_uid)
         REFERENCES project_smartfarm.farms (farm_uid)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+-- ==============================
+--  NOTIFICATION_LOGS: 알림 로그
+-- ============================== 
+CREATE TABLE project_smartfarm.notification_logs (
+    notification_log_uid BIGINT AUTO_INCREMENT PRIMARY KEY,
+    device_serial_number VARCHAR(20) NOT NULL,
+    log_message          VARCHAR(100) NOT NULL,
+    recorded_at          DATETIME     NOT NULL,
+    CONSTRAINT fk_notification_logs_device
+        FOREIGN KEY (device_serial_number)
+        REFERENCES project_smartfarm.devices (device_serial_number)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );

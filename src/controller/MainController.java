@@ -19,6 +19,8 @@ import service.FarmService;
 import service.FarmServiceImpl;
 import service.MemberService;
 import service.MemberServiceImpl;
+import service.NotificationService;
+import service.NotificationServiceImpl;
 import service.PlantService;
 import service.PlantServiceImpl;
 import service.SensorDataService;
@@ -118,7 +120,23 @@ public class MainController {
                 break;
             case "4":
                 // 
-                view.showMessage("⚙️ 일림 관리 메뉴입니다.");
+                view.showMessage("⚙️ 알림 관리 메뉴입니다.");
+                NotificationService notificationService = new NotificationServiceImpl();
+                ArrayList<String> notifications = handleNotificationManagementMenu();
+                String deleteIndexStr = view.showNotificationManagementMenu(notifications.size() == 0);
+                ArrayList<Integer> deleteNLUs = new ArrayList<>();
+                if (deleteIndexStr.equals("0")) {
+                	
+                } else if (deleteIndexStr.equalsIgnoreCase("ALL")) {
+                	notificationService.deleteAllNotification(currentUser.getLoginUser());
+                } else {
+                	String[] deleteIndexs = deleteIndexStr.split(",");
+                    for (int i = 0; i < deleteIndexs.length; i++) {
+                    	String deleteNLU = notifications.get(Integer.parseInt(deleteIndexs[i].trim()) - 1).split("/")[3];
+                    	deleteNLUs.add(Integer.parseInt(deleteNLU));
+                    }
+                    notificationService.deleteNotification(deleteNLUs);
+                }
                 break;
             case "8":
                 logout();
@@ -138,19 +156,34 @@ public class MainController {
         String[] value = new String[4];
         switch (choice) {
             case "1":
-                view.showMessage("추천 식물 1입니다.");
+                view.showMessage("상추의 프리셋입니다.");
                 value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
                 }
                 break;
             case "2":
-                view.showMessage("추천 식물 2입니다.");
+                view.showMessage("딸기의 프리셋입니다.");
+                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                if (value[3].equals("1")) {
+                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                }
                 break;
             case "3":
-                view.showMessage("추천 식물 3입니다.");
+                view.showMessage("바질의 프리셋입니다.");
+                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                if (value[3].equals("1")) {
+                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                }
                 break;
             case "4":
+                view.showMessage("와사비의 프리셋입니다.");
+                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                if (value[3].equals("1")) {
+                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                }
+                break;
+            case "5":
                 view.showInsertMessage("신규 식물의 프리셋을 설정해 주세요.");
                 PresetDTO presetDTO = view.showAddNewPlantMenu();
                 plantService.addCustomPreset(presetDTO);
@@ -162,6 +195,9 @@ public class MainController {
                 break;
             case "8":
             	handleMainMenu();
+                break;
+            case "9":
+            	exitProgram();
                 break;
             default:
                 view.showMessage("(!) 잘못된 입력입니다.");
@@ -256,6 +292,25 @@ public class MainController {
 		}
 	}
 	
+	private ArrayList<String> handleNotificationManagementMenu() {
+		NotificationService notificationService = new NotificationServiceImpl();
+		ArrayList<String> notifications = notificationService.showNotification(currentUser.getLoginUser());
+		int repeat = 35;
+		for (int i = 0; i < notifications.size(); i++) {
+			String[] notification = notifications.get(i).split("/");
+			System.out.println("\n[" + (i + 1) + "]" + "-".repeat(repeat));
+			System.out.println(notification[0]);
+			System.out.println(notification[1]);
+			System.out.println(notification[2]);
+			if (i >= 9) {
+				System.out.println("-".repeat(repeat + 4));
+			} else {
+				System.out.println("-".repeat(repeat + 3));
+			}
+		}
+		return notifications;
+	}
+
 	private void logout() {
 		if(mqttManager != null) mqttManager.close();
 		mqttManager = null;
