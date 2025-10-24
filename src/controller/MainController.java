@@ -155,33 +155,42 @@ public class MainController {
         PlantService plantService = new PlantServiceImpl();
         FarmService farmService = new FarmServiceImpl();
         String[] value = new String[4];
+        PresetDTO preset = null;
         switch (choice) {
             case "1":
                 view.showMessage("상추의 프리셋입니다.");
-                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                preset = plantService.selectPreset(Integer.parseInt(choice));
+                value = view.showPresetMenu(preset);
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],preset);
                 }
                 break;
             case "2":
                 view.showMessage("딸기의 프리셋입니다.");
+                preset = plantService.selectPreset(Integer.parseInt(choice));
                 value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],preset);
                 }
                 break;
             case "3":
                 view.showMessage("바질의 프리셋입니다.");
+                preset = plantService.selectPreset(Integer.parseInt(choice));
                 value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],preset);
                 }
                 break;
             case "4":
                 view.showMessage("와사비의 프리셋입니다.");
+                preset = plantService.selectPreset(Integer.parseInt(choice));
                 value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],preset);
                 }
                 break;
             case "5":
@@ -192,6 +201,7 @@ public class MainController {
                 value = view.showPresetMenu(presetDTO);
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],presetDTO);
                 }
                 break;
             case "8":
