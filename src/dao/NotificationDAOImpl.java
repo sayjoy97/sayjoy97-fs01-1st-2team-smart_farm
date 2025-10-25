@@ -90,7 +90,7 @@ public class NotificationDAOImpl implements NotificationDAO {
 	}
 	
 	@Override
-	public int insertNotification(NotificationLogsDTO notification) {
+	public int addNotification(NotificationLogsDTO notification) {
 		String sql = "INSERT INTO notification_logs VALUES(null, ?, ?, now())";
 		Connection con = null;
 		PreparedStatement ptmt = null;
