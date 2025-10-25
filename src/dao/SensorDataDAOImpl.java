@@ -16,7 +16,7 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	
 	@Override
 	public int insertSensorData(SensorDataDTO data) {
-		String sql = "insert into sensor_logs values(null,?,now(),?,?,?,?)";
+		String sql = "insert into sensor_logs values(null,?,now(),?,?,?,?,?)";
 		Connection con = null;
 		PreparedStatement ptmt = null;	
 		int result = 0;
@@ -26,8 +26,9 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 			ptmt.setString(1, data.getFarmUid());
 			ptmt.setFloat(2, data.getMeasuredTemp());
 			ptmt.setFloat(3, data.getMeasuredHumidity());
-			ptmt.setFloat(4, data.getMeasuredCo2());
-			ptmt.setFloat(5, data.getMeasuredSoilMoisture());
+			ptmt.setFloat(4, data.getMeasuredLight());
+			ptmt.setFloat(5, data.getMeasuredCo2());
+			ptmt.setFloat(6, data.getMeasuredSoilMoisture());
 			
 			result = ptmt.executeUpdate();
 			
@@ -79,6 +80,7 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	                rs.getTimestamp("recorded_at"),
 	                rs.getFloat("measured_temp"),
 	                rs.getFloat("measured_humidity"),
+	                rs.getFloat("measured_Light"),
 	                rs.getFloat("measured_co2"),
 	                rs.getFloat("measured_soil_moisture")
 	            );
@@ -133,6 +135,7 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	                rs.getTimestamp("recorded_at"),
 	                rs.getFloat("measured_temp"),
 	                rs.getFloat("measured_humidity"),
+	                rs.getFloat("measuredLight"),
 	                rs.getFloat("measured_co2"),
 	                rs.getFloat("measured_soil_moisture")
 	            );
