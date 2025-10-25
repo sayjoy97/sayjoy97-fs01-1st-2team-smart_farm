@@ -42,7 +42,7 @@ public class MainController {
         while (true) {
             if (currentUser == null) {
                 // 로그인되지 않았을 때의 로직 처리
-                handleInitialMenu();
+            	handleInitialMenu();
             } else {
                 // 로그인된 후의 로직 처리
                 handleMainMenu();
@@ -81,7 +81,44 @@ public class MainController {
 			handleMainMenu();
 		} else {
 			JOptionPane.showMessageDialog(null, "로그인실패");
-			view.handleLogin();
+			view.showMessage("\n로그인에 실패했습니다.");
+        	while (true) {
+        		String choice = view.showFailLoginMenu();
+            	switch (choice) {
+            		case "1":
+            			handleInitialMenu();
+            			break;
+            		case "2":
+            			view.showMessage("\n아이디/비밀번호 찾기");
+            			String email = view.showInputEmail();
+            			// 입력 받은 이메일을 바탕으로 users테이블에서 본인 확인 질문과 본인 확인 답변 가져오기
+            			MemberDTO findUser = service.findQA(email);
+            			if (findUser == null) {
+            				view.showMessage("잘못된 이메일을 입력하셨습니다.");
+            				System.out.println("\n엔터를 눌러주세요.");
+            				scanner.nextLine();
+            			} else {
+            				String securityQuetion = findUser.getSecurityQuestion();
+                			view.showMessage("\n아이디/비밀번호 찾기");
+                			String securityAnswer = view.showCompareQA(securityQuetion);
+                			if (findUser.getSecurityAnswer().equals(securityAnswer)) {
+                				view.showMessage("\n확인 성공\n");
+                				System.out.println("아이디: " + findUser.getUserId());
+                				System.out.println("비밀번호: " + findUser.getPassword());
+                				System.out.println("\n엔터를 누르면 로그인 화면으로 이동합니다.");
+                				scanner.nextLine();
+                				handleInitialMenu();
+                			} else {
+                				view.showMessage("\n확인 실패\n");
+                				System.out.println("\n엔터를 눌러주세요.");
+                				scanner.nextLine();
+                			}
+            			}
+            			break;
+            		default:
+            			view.showMessage("\n잘못된 값을 입력");
+            	}
+        	}
 		}
 	}
 	private void register() {

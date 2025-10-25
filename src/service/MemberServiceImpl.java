@@ -19,10 +19,14 @@ public class MemberServiceImpl implements MemberService {
 		System.out.println(user);
 		return user;
 	}
-
+	
+	public MemberDTO findQA(String email) {
+		MemberDTO user = memberDAO.findQA(email);
+		return user;
+	}
+	
 	@Override
 	public void updateUserInfo(int userUid, String string, String newPw) {
 		memberDAO.updateUserInfo(userUid, string, newPw);
-		
 	}
 }
