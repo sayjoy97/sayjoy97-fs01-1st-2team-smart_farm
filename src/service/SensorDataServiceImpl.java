@@ -16,7 +16,7 @@ public class SensorDataServiceImpl implements SensorDataService{
 		// 1. 토픽 파싱
         String[] parts = topic.split("/");
         String farmUid = parts[1]; //토픽 구조 예시: "farm/1/sensor" -> 첫번째 자리에 들어감 
-        float temp = 0, humidity = 0, co2 = 0, soil = 0;
+        float temp = 0, humidity = 0, measuredLight = 0, co2 = 0, soil = 0;
         
         // 2. payload 구조 (예: "temp=23.5;hum=60;co2=800;soil=420;")
         // key : value 형식으로 데이터 구분
@@ -35,6 +35,9 @@ public class SensorDataServiceImpl implements SensorDataService{
         		case "humidity":
         			humidity = Float.parseFloat(value);
         			break;
+        		case "measuredLight":
+        			measuredLight = Float.parseFloat(value);
+        			break;
         		case "co2":
         			co2 = Float.parseFloat(value);
         			break;
@@ -50,7 +53,7 @@ public class SensorDataServiceImpl implements SensorDataService{
         		  0,
 				  farmUid,
 				  new Timestamp(System.currentTimeMillis()),
-				  temp, humidity, co2, soil
+				  temp, humidity, measuredLight ,co2, soil
         );
         
         dao.insertSensorData(data);

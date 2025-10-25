@@ -8,6 +8,7 @@ public class SensorDataDTO {
 	    private Timestamp recordedAt; // 센서 데이터가 기록된 시각 (MySQL DATETIME과 매핑)
 	    private Float measuredTemp;
 	    private Float measuredHumidity;
+	    private Float measuredLight;
 	    private Float measuredCo2;
 	    private Float measuredSoilMoisture;
 	    public SensorDataDTO() {
@@ -15,22 +16,16 @@ public class SensorDataDTO {
 	    }
 	    
 		public SensorDataDTO(long logId, String farmUid, Timestamp recordedAt, Float measuredTemp, Float measuredHumidity,
-				Float measuredCo2, Float measuredSoilMoisture) {
+				Float measuredLight, Float measuredCo2, Float measuredSoilMoisture) {
 			super();
 			this.logId = logId;
 			this.farmUid = farmUid;
 			this.recordedAt = recordedAt;
 			this.measuredTemp = measuredTemp;
 			this.measuredHumidity = measuredHumidity;
+			this.measuredLight= measuredLight;
 			this.measuredCo2 = measuredCo2;
 			this.measuredSoilMoisture = measuredSoilMoisture;
-		}
-
-		@Override
-		public String toString() {
-			return "SensorDataDTO [logId=" + logId + ", farmUid=" + farmUid + ", recordedAt=" + recordedAt
-					+ ", measuredTemp=" + measuredTemp + ", measuredHumidity=" + measuredHumidity + ", measuredCo2="
-					+ measuredCo2 + ", measuredSoilMoisture=" + measuredSoilMoisture + "]";
 		}
 
 		public long getLogId() {
@@ -73,6 +68,14 @@ public class SensorDataDTO {
 			this.measuredHumidity = measuredHumidity;
 		}
 
+		public Float getMeasuredLight() {
+			return measuredLight;
+		}
+
+		public void setMeasuredLight(Float measuredLight) {
+			this.measuredLight = measuredLight;
+		}
+
 		public Float getMeasuredCo2() {
 			return measuredCo2;
 		}
@@ -88,6 +91,11 @@ public class SensorDataDTO {
 		public void setMeasuredSoilMoisture(Float measuredSoilMoisture) {
 			this.measuredSoilMoisture = measuredSoilMoisture;
 		}
-		
-
+		@Override
+		public String toString() {
+			return "SensorDataDTO [logId=" + logId + ", farmUid=" + farmUid + ", recordedAt=" + recordedAt
+					+ ", measuredTemp=" + measuredTemp + ", measuredHumidity=" + measuredHumidity + ", measuredLight="
+					+ measuredLight + ", measuredCo2=" + measuredCo2 + ", measuredSoilMoisture=" + measuredSoilMoisture
+					+ "]";
+		}
 }
