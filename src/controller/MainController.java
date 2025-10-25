@@ -352,24 +352,48 @@ public class MainController {
 		            view.showMessage("(!) 잘못된 입력입니다.");
 		    }
 		    break;
-        case "3":
+        case "3": 
         	view.showMessage("기기 추가입니다.");
-            dsn = view.showAddDevice();
-            deviceService.addNewDevice(currentUser.getLoginUser(), dsn);
-            farmService.createFarm(currentUser.getLoginUser(), dsn);
-            break;
+        	
+            System.out.print("  [1] 기기 시리얼 넘버 입력 ");
+            System.out.println("\n  [8] 뒤로가기");
+            dsn = scanner.nextLine().trim();
+
+            if (dsn.equals("1")) {
+                dsn = view.showAddDevice();
+                deviceService.addNewDevice(currentUser.getLoginUser(), dsn);
+                farmService.createFarm(currentUser.getLoginUser(), dsn);
+                break;
+            }
+            if (dsn.equals("8")) {
+                return;
+            }
+
+            
         case "4":
         	view.showMessage("기기 삭제입니다.");
+        	//사용자 기기 목록을 조회
         	ArrayList<DeviceDTO> deviceList = deviceService.selectUserDevices(currentUser.getLoginUser());
-        	for (int i = 0; i < deviceList.size(); i++) {
-        		dsn = deviceList.get(i).getDeviceSerialNumber();
-        		System.out.println("[" + (i + 1) + "] " + dsn);
-        	}
-        	int deleteNum = view.showDeleteDevice();
-        	String DeleteDSN = deviceList.get(deleteNum - 1).getDeviceSerialNumber();
-        	farmService.deleteFarm(DeleteDSN);
-        	deviceService.deleteDevice(DeleteDSN);
-            break;
+        	 // 메뉴 표시
+            System.out.println("\n  [1] 삭제할 기기 선택");
+            System.out.println("  [8] 뒤로가기");
+            System.out.print("\n> 입력: ");
+            String input = scanner.nextLine().trim();
+            
+            if (input.equals("1")) {
+            	for (int i = 0; i < deviceList.size(); i++) {
+            		dsn = deviceList.get(i).getDeviceSerialNumber();
+            		System.out.println("[" + (i + 1) + "] " + dsn);
+            	}
+            	int deleteNum = view.showDeleteDevice();
+            	String DeleteDSN = deviceList.get(deleteNum - 1).getDeviceSerialNumber();
+            	farmService.deleteFarm(DeleteDSN);
+            	deviceService.deleteDevice(DeleteDSN);
+                break;
+            }
+            if (input.equals("8")) {
+                return;
+            }
         case "8":
         	return;
         case "9":
