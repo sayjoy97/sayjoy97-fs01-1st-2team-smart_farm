@@ -192,33 +192,42 @@ public class MainController {
         PlantService plantService = new PlantServiceImpl();
         FarmService farmService = new FarmServiceImpl();
         String[] value = new String[4];
+        PresetDTO preset = null;
         switch (choice) {
             case "1":
                 view.showMessage("상추의 프리셋입니다.");
-                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                preset = plantService.selectPreset(Integer.parseInt(choice));
+                value = view.showPresetMenu(preset);
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],preset);
                 }
                 break;
             case "2":
                 view.showMessage("딸기의 프리셋입니다.");
+                preset = plantService.selectPreset(Integer.parseInt(choice));
                 value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],preset);
                 }
                 break;
             case "3":
                 view.showMessage("바질의 프리셋입니다.");
+                preset = plantService.selectPreset(Integer.parseInt(choice));
                 value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],preset);
                 }
                 break;
             case "4":
                 view.showMessage("와사비의 프리셋입니다.");
+                preset = plantService.selectPreset(Integer.parseInt(choice));
                 value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],preset);
                 }
                 break;
             case "5":
@@ -229,6 +238,7 @@ public class MainController {
                 value = view.showPresetMenu(presetDTO);
                 if (value[3].equals("1")) {
                 	farmService.addFarm(value[0], value[1] + ":" + value[2]);
+                	mqttManager.publish(value[0],presetDTO);
                 }
                 break;
             case "8":
@@ -269,14 +279,79 @@ public class MainController {
 
 	
 	private void handleMyPageMenu() {
+		while(true) {
 		String choice = view.showMyPageMenu();
 		String dsn = "";
 		switch (choice) {
-        case "1":
-            // 여기에 정보 조회하는 메서드 호출하면 될 듯
-            break;
-        case "2":
-            break;
+		case "1":
+			view.showMessage("정보 조회 메뉴입니다.");
+			//현재 로그인 중인 사용자 불러오기
+			MemberDTO user = currentUser.getLoginUser();
+			
+			// 사용자의 등록된 기기 리스트 가져오기 
+			ArrayList<DeviceDTO> devices = deviceService.selectUserDevices(user);
+			view.showInfo(user, devices);
+			System.out.print("\n뒤로가려면 Enter를 누르세요...");
+			scanner.nextLine(); // 입력 대기 (없으면 바로 다음 메뉴로 넘어감)
+			break;
+		case "2":
+		    view.showMessage("정보 수정 메뉴입니다.");
+
+		    String updateChoice = view.showUpdateMenu(); // 1. 비밀번호 / 2. 이름 / 3. 이메일
+		    MemberDTO userUpdate = currentUser.getLoginUser();
+
+		    switch (updateChoice) {
+		        case "1": // 비밀번호 변경
+		            String currentPw = view.getNewValue("현재 비밀번호");
+		            if (!userUpdate.getPassword().equals(currentPw)) {
+		                view.showMessage("❌ 현재 비밀번호가 일치하지 않습니다.");
+		                System.out.print("\n뒤로가려면 Enter를 누르세요...");
+		                scanner.nextLine();
+		                break;
+		            }
+
+		            String newPw = view.getNewValue("새 비밀번호");
+		            service.updateUserInfo(userUpdate.getUserUid(), "password", newPw);
+		            userUpdate.setPassword(newPw);
+		            view.showMessage("비밀번호가 성공적으로 변경되었습니다!");
+		            System.out.print("\n뒤로가려면 Enter를 누르세요...");
+		            scanner.nextLine();
+		            break;
+
+		        case "2": // 이름 변경
+		            String oldName = userUpdate.getName(); // 현재 이름 저장
+		            String newName = view.getNewValue("새 이름");
+
+		            service.updateUserInfo(userUpdate.getUserUid(), "name", newName);
+		            userUpdate.setName(newName); // 세션 반영
+
+		            // 변경 내역 표시
+		            view.showMessage("이름이 '" + oldName + "' → '" + newName + "' 로 변경되었습니다!");
+		            System.out.print("\n뒤로가려면 Enter를 누르세요...");
+		            scanner.nextLine();
+		            break;
+
+		        case "3": //이메일 변경
+		            String oldEmail = userUpdate.getEmail(); // 기존 이메일
+		            String newEmail = view.getNewValue("새 이메일");
+
+		            service.updateUserInfo(userUpdate.getUserUid(), "email", newEmail);
+		            userUpdate.setEmail(newEmail); // 세션 반영
+
+		            // 변경 내역 표시
+		            view.showMessage("이메일이 '" + oldEmail + "' → '" + newEmail + "' 로 변경되었습니다!");
+		            System.out.print("\n뒤로가려면 Enter를 누르세요...");
+		            scanner.nextLine();
+		            break;
+
+
+		        case "8": // 뒤로가기
+		            return;
+
+		        default:
+		            view.showMessage("(!) 잘못된 입력입니다.");
+		    }
+		    break;
         case "3":
         	view.showMessage("기기 추가입니다.");
             dsn = view.showAddDevice();
@@ -296,12 +371,13 @@ public class MainController {
         	deviceService.deleteDevice(DeleteDSN);
             break;
         case "8":
-        	handleMainMenu();
-            break;
+        	return;
         case "9":
+        	exitProgram();
             break;
         default:
             view.showMessage("(!) 잘못된 입력입니다.");
+		}
 		}
 	}
 

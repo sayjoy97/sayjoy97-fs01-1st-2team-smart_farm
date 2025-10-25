@@ -24,4 +24,9 @@ public class MemberServiceImpl implements MemberService {
 		MemberDTO user = memberDAO.findQA(email);
 		return user;
 	}
+	
+	@Override
+	public void updateUserInfo(int userUid, String string, String newPw) {
+		memberDAO.updateUserInfo(userUid, string, newPw);
+	}
 }
