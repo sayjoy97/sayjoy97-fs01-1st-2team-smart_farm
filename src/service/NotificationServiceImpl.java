@@ -46,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
 			);
 			
 			// 5. DB에 저장
-			notificationDAO.insertNotification(notification);
+			notificationDAO.addNotification(notification);
 			System.out.println("알림 DB 저장 완료! " + notification);
 			
 		} catch (Exception e) {
