@@ -88,6 +88,7 @@ CREATE TABLE project_smartfarm.sensor_logs (
     recorded_at            DATETIME    NOT NULL,
     measured_temp          FLOAT       NOT NULL,
     measured_humidity      FLOAT       NOT NULL,
+    measured_light         FLOAT       NOT NULL,
     measured_co2           FLOAT,
     measured_soil_moisture FLOAT       NOT NULL,
     CONSTRAINT fk_sensor_logs_farm
