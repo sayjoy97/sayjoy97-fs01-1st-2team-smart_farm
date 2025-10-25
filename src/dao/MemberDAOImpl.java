@@ -64,4 +64,30 @@ public class MemberDAOImpl implements MemberDAO {
 		}
 		return loginSuccessUser;
 	}
+	
+	public MemberDTO findQA(String email) {
+		Connection con = null;
+		PreparedStatement ptmt =null;
+		ResultSet rs = null;
+		MemberDTO user = null;
+		String sql = "select * from users where email = ?";
+		try {
+			con = DBUtil.getConnect();
+			ptmt =  con.prepareStatement(sql);
+			ptmt.setString(1, email);
+			rs =  ptmt.executeQuery();
+			if(rs.next()) {
+				user = new MemberDTO(rs.getInt("user_uid"), 
+						rs.getString("user_id"), rs.getString("password"),
+						rs.getString("email"), rs.getString("name"),
+						rs.getString("security_question"), rs.getString("security_answer"),
+						rs.getString("device_serial_number"));
+			}
+		}  catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs, ptmt, con);
+		}
+		return user;
+	}
 }

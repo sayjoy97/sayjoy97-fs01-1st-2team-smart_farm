@@ -93,6 +93,30 @@ public class MainView {
 		String password = scanner.nextLine();
 		return new LoginUserDTO(username, password);
 	}
+	
+	public String showFailLoginMenu() {
+		System.out.println("\n원하는 서비스를 선택하세요.\n");
+		System.out.println("[1] 다시 로그인 하기");
+    	System.out.println("[2] 아이디/비밀번호 찾기");
+    	System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
+	
+	public String showInputEmail() {
+		System.out.println("\n이메일을 입력해주세요.\n");
+		System.out.println("\n--------------------------------------------------");
+		System.out.print("> 입력: ");
+		return scanner.nextLine();
+	}
+	
+	public String showCompareQA(String securityQuestion) {
+		System.out.println("\n답변을 입력해주세요.\n");
+		System.out.println("본인 확인 질문: " + securityQuestion);
+		System.out.print("답변 입력: ");
+		return scanner.nextLine();
+	}
+	
 	public static void exitProgram() {
 	        System.out.println("프로그램을 종료합니다. 안녕히 가세요!");
 	        System.exit(0);

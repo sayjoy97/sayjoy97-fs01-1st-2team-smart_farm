@@ -19,4 +19,9 @@ public class MemberServiceImpl implements MemberService {
 		System.out.println(user);
 		return user;
 	}
+	
+	public MemberDTO findQA(String email) {
+		MemberDTO user = memberDAO.findQA(email);
+		return user;
+	}
 }
