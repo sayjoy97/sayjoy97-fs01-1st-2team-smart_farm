@@ -9,5 +9,5 @@ public interface NotificationDAO {
 	ArrayList<String> showNotification(MemberDTO user);
 	int deleteAllNotification(MemberDTO user);
 	int deleteNotification(ArrayList<Integer> deleteNLUs);
-	int insertNotification(NotificationLogsDTO notification);
+	int addNotification(NotificationLogsDTO notification);
 }
