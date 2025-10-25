@@ -234,30 +234,23 @@ public class MainView {
     }
 	
 	public void showInfo(MemberDTO user, ArrayList<DeviceDTO> devices) {
-		System.out.println("\n아이디: " + user.getUserId());
-		System.out.println("이름: " + user.getName());
-		System.out.println("이메일: " + user.getEmail());
-		System.out.println("등록된 기기: ");
-
-		System.out.println("\n원하시는 메뉴를 선택해주세요.\n");
-		System.out.println("  [1] 정보 조회");
-		System.out.println("  [2] 정보 수정");
-		System.out.println("  [3] 기기 추가");
-		System.out.println("  [4] 기기 삭제");
-		System.out.println("  [8] 뒤로가기");
-		System.out.println("  [9] 프로그램 종료");
-		System.out.println("\n--------------------------------------------------");
-		if (devices.isEmpty()) {
-	        System.out.println("  (등록된 기기가 없습니다)");
-	    } else {
-	        int i = 1;
-	        for (DeviceDTO d : devices) {
-	            System.out.println("  " + (i++) + ". " + d.getDeviceSerialNumber());
-	        }
-	    }
-	    System.out.println("\n--------------------------------------------------");
-	    
-	}
+			System.out.println("\n아이디: " + user.getUserId());
+			System.out.println("이름: " + user.getName());
+			System.out.println("이메일: " + user.getEmail());
+			System.out.println("등록된 기기: ");
+			
+			
+			if (devices.isEmpty()) {
+		        System.out.println("  (등록된 기기가 없습니다)");
+		    } else {
+		        int i = 1;
+		        for (DeviceDTO d : devices) {
+		            System.out.println("  " + (i++) + ". " + d.getDeviceSerialNumber());
+		        }
+		    }
+		    System.out.println("\n--------------------------------------------------");
+		    
+		}
 	public String showUpdateMenu() {
 	
 		System.out.println("  [1] 비밀번호 수정");
