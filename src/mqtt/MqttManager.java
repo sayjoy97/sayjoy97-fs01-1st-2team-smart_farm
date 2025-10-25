@@ -10,6 +10,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import dto.PresetDTO;
+import service.NotificationService;
+import service.NotificationServiceImpl;
 import service.SensorDataService;
 import service.SensorDataServiceImpl;
 
@@ -20,7 +22,8 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     private final String broker = "tcp://localhost:1883";
     private String pubTopic; // 유저, 기계 식별 앞에 붙이기
     private String subTopic; // {유저}/smartfarm 하위의 모든 토픽을 구독
-    private SensorDataService service = new SensorDataServiceImpl();
+    private SensorDataService sensorService = new SensorDataServiceImpl();
+    private NotificationService notificationService = new NotificationServiceImpl();
 
     public String getPubTopic() {
 		return pubTopic;
@@ -97,8 +100,8 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     private void subscribe() {
         try {
             if (DBServerMode) {
-                this.client.subscribe("+/smartfarm/+/sensor/data", 1); //라즈베리파이로부터 센서 정보 수신
-                System.out.println("Subscribed to topic: +/smartfarm/+/sensor/data");
+                this.client.subscribe("+/smartfarm/+/sensor/#", 1); //라즈베리파이로부터 센서 정보 및 알림 수신
+                System.out.println("Subscribed to topic: +/smartfarm/+/sensor/#");
             } else {
             	setSubTopic();
                 this.client.subscribe(subTopic);
@@ -176,14 +179,15 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         // 이 메소드는 메시지가 도착할 때마다 Paho 라이브러리에 의해 자동으로 호출됩니다.
-//        System.out.println("\n=============== MESSAGE ARRIVED ===============");
-//        System.out.println(" Topic: " + topic);
-//        System.out.println(" Message: " + new String(message.getPayload()));
-//        System.out.println("=============================================");
-        if(topic.contains("sensor")) {
-        	if(topic.endsWith("dht11")) {
-        		service.saveData(topic, new String(message.getPayload()));
-        	}
+        String payload = new String(message.getPayload());
+        
+        // 토픽별 분기 처리
+        if(topic.endsWith("/sensor/data")) {
+        	// 센서 데이터 저장
+        	sensorService.saveData(topic, payload);
+        } else if(topic.endsWith("/sensor/nl")) {
+        	// 알림 저장
+        	notificationService.saveNotification(topic, payload);
         }
     }
 

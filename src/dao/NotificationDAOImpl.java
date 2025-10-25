@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import dto.MemberDTO;
+import dto.NotificationLogsDTO;
 import util.DBUtil;
 
 public class NotificationDAOImpl implements NotificationDAO {
@@ -86,5 +87,27 @@ public class NotificationDAOImpl implements NotificationDAO {
 	        DBUtil.close(null, ptmt, con);
 	    }
 	    return returnValue;
+	}
+	
+	@Override
+	public int insertNotification(NotificationLogsDTO notification) {
+		String sql = "INSERT INTO notification_logs VALUES(null, ?, ?, now())";
+		Connection con = null;
+		PreparedStatement ptmt = null;
+		int result = 0;
+		try {
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+			ptmt.setString(1, notification.getDeviceSerialNumber());
+			ptmt.setString(2, notification.getLogMessage());
+			
+			result = ptmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(null, ptmt, con);
+		}
+		return result;
 	}
 }

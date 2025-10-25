@@ -8,4 +8,5 @@ public interface NotificationService {
 	ArrayList<String> showNotification(MemberDTO user);
 	void deleteAllNotification(MemberDTO user);
 	void deleteNotification(ArrayList<Integer> deleteNLUs);
+	void saveNotification(String topic, String payload);
 }
