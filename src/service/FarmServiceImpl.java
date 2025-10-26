@@ -6,6 +6,7 @@ import dao.FarmDAO;
 import dao.FarmDAOImpl;
 import dto.FarmDTO;
 import dto.MemberDTO;
+import dto.PresetDTO;
 import mqtt.MqttManager;
 
 public class FarmServiceImpl implements FarmService {
@@ -30,5 +31,13 @@ public class FarmServiceImpl implements FarmService {
 	
 	public void deleteFarm(String deleteDSN) {
 		farmDAO.deleteFarm(deleteDSN);
+	}
+	
+	public String getPlantName(String farmUid) {
+		return farmDAO.getPlantName(farmUid);
+	}
+	
+	public PresetDTO selectPresetByFarmUid(String farmUid) {
+		return farmDAO.selectPresetByFarmUid(farmUid);
 	}
 }
