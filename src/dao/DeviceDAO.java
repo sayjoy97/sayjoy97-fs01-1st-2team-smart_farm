@@ -10,4 +10,5 @@ public interface DeviceDAO {
 	ArrayList<DeviceDTO> selectUserDevices(MemberDTO user);
 	int addNewDevice(MemberDTO user, String dsn);
 	int deleteDevice(String deleteDSN);
+	String getUserIdByDeviceSerial(String deviceSerial);
 }

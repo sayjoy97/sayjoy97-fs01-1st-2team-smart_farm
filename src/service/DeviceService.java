@@ -10,4 +10,5 @@ public interface DeviceService {
 	int addNewDevice(MemberDTO user, String dsn);
 	ArrayList<DeviceDTO> selectUserDevices(MemberDTO user);
 	void deleteDevice(String deleteDSN);
+	String getUserIdByDeviceSerial(String deviceSerial);
 }

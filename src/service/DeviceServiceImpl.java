@@ -28,4 +28,9 @@ public class DeviceServiceImpl implements DeviceService {
 	public void deleteDevice(String deleteDSN) {
 		deviceDAO.deleteDevice(deleteDSN);
 	}
+	
+	@Override
+	public String getUserIdByDeviceSerial(String deviceSerial) {
+		return deviceDAO.getUserIdByDeviceSerial(deviceSerial);
+	}
 }

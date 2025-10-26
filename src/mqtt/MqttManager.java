@@ -10,6 +10,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import dto.PresetDTO;
+import service.DeviceService;
+import service.DeviceServiceImpl;
 import service.NotificationService;
 import service.NotificationServiceImpl;
 import service.SensorDataService;
@@ -24,6 +26,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     private String subTopic; // {유저}/smartfarm 하위의 모든 토픽을 구독
     private SensorDataService sensorService = new SensorDataServiceImpl();
     private NotificationService notificationService = new NotificationServiceImpl();
+    private DeviceService deviceService = new DeviceServiceImpl();
 
     public String getPubTopic() {
 		return pubTopic;
@@ -39,9 +42,9 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
 		return subTopic;
 	}
 	
-	//id에 등록된 모든 기기들의 모든 센서 데이터를 받아옴
+	//id에 등록된 모든 기기들의 알림을 받아옴
 	public void setSubTopic() {
-		this.subTopic = id+"/smartfarm/+/sensor/data";
+		this.subTopic = id+"/smartfarm/+/sensor/nl";  // 알림만 구독
 	}
 	
 	public MqttManager(String id) {//사용자 모드 생성자
@@ -100,8 +103,13 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     private void subscribe() {
         try {
             if (DBServerMode) {
-                this.client.subscribe("+/smartfarm/+/sensor/#", 1); //라즈베리파이로부터 센서 정보 및 알림 수신
-                System.out.println("Subscribed to topic: +/smartfarm/+/sensor/#");
+                // 센서 데이터 및 알림 수신
+                this.client.subscribe("smartfarm/+/sensor/#", 1);
+                System.out.println("Subscribed to topic: smartfarm/+/sensor/#");
+                
+                // 프리셋 요청 수신
+                this.client.subscribe("smartfarm/+/preset/request", 1);
+                System.out.println("Subscribed to topic: smartfarm/+/preset/request");
             } else {
             	setSubTopic();
                 this.client.subscribe(subTopic);
@@ -124,10 +132,10 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
             me.printStackTrace();
         }
     }
-    //라즈베리파이에 프리셋 적용시키기 위한 정보를 보내는 발행
-    public void publish(String farmUid, PresetDTO preset) {
+    //라즈베리파이에 프리셋 업데이트 발행 (유저가 설정 변경 시)
+    public void publishPresetUpdate(String farmUid, PresetDTO preset) {
         try {
-            System.out.println(farmUid+"에 프리셋을 세팅합니다.");
+            System.out.println(farmUid+"에 프리셋 업데이트를 전송합니다.");
             
             String presetmsg = "Co2Level="+String.valueOf(preset.getCo2Level())
             		+";LightIntensity="+ String.valueOf(preset.getLightIntensity())
@@ -137,8 +145,33 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
 
             MqttMessage message = new MqttMessage(presetmsg.getBytes());
             message.setQos(1); // QoS Level 1
-            this.client.publish(id+"/smartfarm/"+farmUid+"/cmd/", message);
-            System.out.println("Message published.");
+            this.client.publish("smartfarm/"+farmUid+"/preset", message);
+            System.out.println("프리셋 업데이트 발행 완료: smartfarm/"+farmUid+"/preset");
+        } catch (MqttException me) {
+            me.printStackTrace();
+        }
+    }
+    
+    //프리셋 요청에 대한 응답 발행 (DB 조회 후)
+    public void publishPresetResponse(String farmUid, PresetDTO preset) {
+        try {
+            String presetmsg;
+            if (preset != null) {
+                presetmsg = "OptimalTemp="+String.valueOf(preset.getOptimalTemp())
+                        + ";OptimalHumidity="+String.valueOf(preset.getOptimalHumidity())
+                        + ";LightIntensity="+ String.valueOf(preset.getLightIntensity())
+                        + ";SoilMoisture="+String.valueOf(preset.getSoilMoisture())
+                        + ";Co2Level="+String.valueOf(preset.getCo2Level());
+                System.out.println(farmUid+"에 대한 프리셋 응답: " + presetmsg);
+            } else {
+                presetmsg = "none";
+                System.out.println(farmUid+"에 대한 프리셋 없음 (기본값 사용)");
+            }
+
+            MqttMessage message = new MqttMessage(presetmsg.getBytes());
+            message.setQos(1); // QoS Level 1
+            this.client.publish("smartfarm/"+farmUid+"/preset/response", message);
+            System.out.println("프리셋 응답 발행 완료: smartfarm/"+farmUid+"/preset/response");
         } catch (MqttException me) {
             me.printStackTrace();
         }
@@ -183,11 +216,68 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
         
         // 토픽별 분기 처리
         if(topic.endsWith("/sensor/data")) {
-        	// 센서 데이터 저장
+        	// 센서 데이터 저장 (DB 서버 모드)
         	sensorService.saveData(topic, payload);
+        	
         } else if(topic.endsWith("/sensor/nl")) {
-        	// 알림 저장
-        	notificationService.saveNotification(topic, payload);
+        	if (DBServerMode) {
+        		// DB 서버 모드: 알림 저장 + 해당 유저에게 중계
+        		notificationService.saveNotification(topic, payload);
+        		
+        		// deviceSerial 추출 (예: smartfarm/A1001/sensor/nl → A1001)
+        		String deviceSerial = extractDeviceSerial(topic);
+        		
+        		// DB에서 device_serial로 user_id 조회
+        		String userId = deviceService.getUserIdByDeviceSerial(deviceSerial);
+        		
+        		if (userId != null) {
+        			// 해당 유저에게 알림 중계
+        			publishNotificationToUser(userId, deviceSerial, payload);
+        		} else {
+        			System.out.println("⚠️  deviceSerial=" + deviceSerial + "에 연결된 유저 없음");
+        		}
+        		
+        	} else {
+        		// 유저 모드: 알림 수신 처리 (UI 표시 등)
+        		System.out.println("🔔 알림 수신: " + payload);
+        		// TODO: UI에 알림 표시
+        	}
+        	
+        } else if(topic.endsWith("/preset/request")) {
+        	// 프리셋 요청 처리 (DB 서버 모드)
+        	String farmUid = payload; // 예: "A1001:1"
+        	System.out.println("프리셋 요청 수신: " + farmUid);
+        	
+        	// TODO: DB에서 farmUid에 해당하는 프리셋 조회
+        	// PresetDTO preset = presetService.findByFarmUid(farmUid);
+        	// publishPresetResponse(farmUid, preset);
+        	
+        	// 임시: 프리셋이 없다고 가정
+        	publishPresetResponse(farmUid, null);
+        	
+        	System.out.println("⚠️  TODO: DB에서 프리셋 조회 후 publishPresetResponse() 호출 필요");
+        }
+    }
+    
+    // deviceSerial 추출 (smartfarm/A1001/sensor/nl → A1001)
+    private String extractDeviceSerial(String topic) {
+        String[] parts = topic.split("/");
+        if (parts.length >= 2) {
+            return parts[1];  // smartfarm/A1001/sensor/nl에서 A1001
+        }
+        return null;
+    }
+    
+    // 알림을 특정 유저에게 중계 발행
+    public void publishNotificationToUser(String userId, String deviceSerial, String notification) {
+        try {
+            String userTopic = userId + "/smartfarm/" + deviceSerial + "/sensor/nl";
+            MqttMessage msg = new MqttMessage(notification.getBytes());
+            msg.setQos(1);
+            this.client.publish(userTopic, msg);
+            System.out.println("알림 발행: " + userTopic + " → " + notification);
+        } catch (MqttException me) {
+            me.printStackTrace();
         }
     }
 
