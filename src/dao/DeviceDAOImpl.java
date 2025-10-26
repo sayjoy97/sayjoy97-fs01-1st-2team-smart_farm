@@ -105,5 +105,34 @@ public class DeviceDAOImpl implements DeviceDAO {
 		}
 		return result;
 	}
+	
+	@Override
+	public String getUserIdByDeviceSerial(String deviceSerial) {
+		String sql = "SELECT u.user_id " +
+		             "FROM devices d " +
+		             "JOIN users u ON d.user_uid = u.user_uid " +
+		             "WHERE d.device_serial_number = ?";
+		Connection con = null;
+		PreparedStatement ptmt = null;
+		ResultSet rs = null;
+		String userId = null;
+		
+		try {
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+			ptmt.setString(1, deviceSerial);
+			rs = ptmt.executeQuery();
+			
+			if (rs.next()) {
+				userId = rs.getString("user_id");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs, ptmt, con);
+		}
+		
+		return userId;
+	}
 }
 	
