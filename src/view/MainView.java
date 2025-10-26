@@ -105,7 +105,7 @@ public class MainView {
 	
 	public String showInputEmail() {
 		System.out.println("\n이메일을 입력해주세요.\n");
-		System.out.println("\n--------------------------------------------------");
+		System.out.println("--------------------------------------------------");
 		System.out.print("> 입력: ");
 		return scanner.nextLine();
 	}
@@ -121,18 +121,12 @@ public class MainView {
 	        System.out.println("프로그램을 종료합니다. 안녕히 가세요!");
 	        System.exit(0);
 	    }
+
 	public void showMessage(String string) {
 		ConsoleUtils.clearConsole();
 		System.out.println("\n==================================================");
 		System.out.println("      " + string);
 		System.out.println("==================================================");
-	}
-	
-	public void showInsertMessage(String string) {
-		ConsoleUtils.clearConsole();
-		System.out.println("\n==================================================");
-		System.out.println("      " + string);
-		System.out.println("--------------------------------------------------");
 	}
 	
 	public String showAddPlantMenu() {
@@ -177,19 +171,19 @@ public class MainView {
 	}
 	public PresetDTO showAddNewPlantMenu() {
 		PresetDTO presetDTO = new PresetDTO();
-		System.out.print("식물 이름: ");
+		System.out.print("  [식물 이름]: ");
 		presetDTO.setPlantName(scanner.nextLine());
-		System.out.print("희망 온도 설정: ");
+		System.out.print("  [희망 온도 설정]: ");
 		presetDTO.setOptimalTemp(scanner.nextFloat());
-		System.out.print("희망 습도 설정: ");
+		System.out.print("  [희망 습도 설정]: ");
 		presetDTO.setOptimalHumidity(scanner.nextFloat());
-		System.out.print("희망 조도 설정: ");
+		System.out.print("  [희망 조도 설정]: ");
 		presetDTO.setLightIntensity(scanner.nextFloat());
-		System.out.print("희망 CO2농도 설정: ");
+		System.out.print("  [희망 CO2농도 설정]: ");
 		presetDTO.setCo2Level(scanner.nextFloat());
-		System.out.print("희망 토양 습도 설정: ");
+		System.out.print("  [희망 토양 습도 설정]: ");
 		presetDTO.setSoilMoisture(scanner.nextFloat());
-		System.out.print("예상 생장 기간(일): ");
+		System.out.print("  [예상 생장 기간(일)]: ");
 		presetDTO.setGrowthPeriodDays(scanner.nextInt());
 		
 		return presetDTO;
@@ -197,18 +191,18 @@ public class MainView {
 	
 	public String[] showPresetMenu(PresetDTO presetDTO) {
 		String[] value = new String[4];  // value[0]: (식물 이름) / value[1]: (기기 시리얼 넘버) / value[2]: (슬롯번호) / value[3]: 1(확인), 2(취소)
-		System.out.println("식물 이름: " + presetDTO.getPlantName());
-		System.out.println("적정 온도: " + presetDTO.getOptimalTemp());
-		System.out.println("적정 습도: " + presetDTO.getOptimalHumidity());
-		System.out.println("적정 조도: " + presetDTO.getLightIntensity());
-		System.out.println("적정 CO2농도: " + presetDTO.getCo2Level());
-		System.out.println("적정 토양 습도: " + presetDTO.getSoilMoisture());
-		System.out.println("예상 생장 기간(일): " + presetDTO.getGrowthPeriodDays());
+		System.out.println("  [식물 이름] " + presetDTO.getPlantName());
+		System.out.println("  [적정 온도] " + presetDTO.getOptimalTemp());
+		System.out.println("  [적정 습도] " + presetDTO.getOptimalHumidity());
+		System.out.println("  [적정 조도] " + presetDTO.getLightIntensity());
+		System.out.println("  [적정 CO2농도] " + presetDTO.getCo2Level());
+		System.out.println("  [적정 토양 습도] " + presetDTO.getSoilMoisture());
+		System.out.println("  [예상 생장 기간(일)] " + presetDTO.getGrowthPeriodDays());
 		value[0] = presetDTO.getPlantName();
 		scanner.nextLine();
-		System.out.print("예상 생장 기간(일): ");
+		System.out.print("  기기 시리얼 넘버를 입력해주세요: ");
 		value[1] = scanner.nextLine();
-		System.out.print("슬롯 번호를 입력하세요: ");
+		System.out.print("  슬롯 번호를 입력하세요: ");
 		value[2] = scanner.nextLine();
 		
 		System.out.println("\n--------------------------------------------------");
@@ -386,8 +380,9 @@ public class MainView {
 	}
 	
 	public String showFarmDetailMenu() {
-		System.out.println("\n원하시는 메뉴를 선택해주세요.\n");
+		System.out.println("\n  원하시는 메뉴를 선택해주세요.\n");
 		System.out.println("  [1] 센서 데이터 목록 보기 (최근 10개)");
+		System.out.println("  [2] 10시간 센서 데이터 보기");
 		System.out.println("  [8] 뒤로가기");
 		System.out.println("  [9] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
@@ -397,29 +392,27 @@ public class MainView {
 	
 	public void showSensorDataList(String farmUid) {
 		SensorDataService sensorDataService = new SensorDataServiceImpl();
-		System.out.println("\n==================================================");
-		System.out.println("센서 데이터 기록 (최근 10개)");
-		System.out.println("==================================================\n");
-		
 		List<SensorDataDTO> dataList = sensorDataService.getLogsByFarm(farmUid, 24, 10);
 		
 		if(dataList != null && !dataList.isEmpty()) {
 			for(SensorDataDTO data : dataList) {
 				System.out.println("기록시각각 " + data.getRecordedAt());
-				System.out.println(" 온도: " + data.getMeasuredTemp() + "°C" +
+				System.out.println("  온도: " + data.getMeasuredTemp() + "°C" +
 						         "  습도: " + data.getMeasuredHumidity() + "%" +
 						         "  CO2: " + data.getMeasuredCo2() + "ppm" +
-						         "   토양: " + data.getMeasuredSoilMoisture());
+						         "  토양: " + data.getMeasuredSoilMoisture());
 				System.out.println();
 			}
 		} else {
 			System.out.println("  (!) 센서 데이터가 없습니다.\n");
 		}
 	}
+	
 	public String showNotificationManagementMenu(boolean bool) {
 		if (bool) {
 			System.out.println("\n새로운 메시지가 없습니다.");
 			System.out.println("엔터를 눌러주세요.");
+			System.out.println("\n--------------------------------------------------");
 			scanner.nextLine();
 			return "0";
 		} else {
