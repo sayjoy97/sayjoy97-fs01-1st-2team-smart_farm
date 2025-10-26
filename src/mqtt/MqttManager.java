@@ -10,6 +10,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import dto.PresetDTO;
+import service.DeviceService;
+import service.DeviceServiceImpl;
 import service.NotificationService;
 import service.NotificationServiceImpl;
 import service.SensorDataService;
@@ -24,6 +26,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     private String subTopic; // {유저}/smartfarm 하위의 모든 토픽을 구독
     private SensorDataService sensorService = new SensorDataServiceImpl();
     private NotificationService notificationService = new NotificationServiceImpl();
+    private DeviceService deviceService = new DeviceServiceImpl();
 
     public String getPubTopic() {
 		return pubTopic;
@@ -224,13 +227,15 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
         		// deviceSerial 추출 (예: smartfarm/A1001/sensor/nl → A1001)
         		String deviceSerial = extractDeviceSerial(topic);
         		
-        		// TODO: DB에서 device_serial로 user_id 조회
-        		// String userId = deviceService.getUserIdByDeviceSerial(deviceSerial);
-        		// if (userId != null) {
-        		//     publishNotificationToUser(userId, deviceSerial, payload);
-        		// }
+        		// DB에서 device_serial로 user_id 조회
+        		String userId = deviceService.getUserIdByDeviceSerial(deviceSerial);
         		
-        		System.out.println("⚠️  TODO: deviceSerial=" + deviceSerial + "로 user_id 조회 후 중계 필요");
+        		if (userId != null) {
+        			// 해당 유저에게 알림 중계
+        			publishNotificationToUser(userId, deviceSerial, payload);
+        		} else {
+        			System.out.println("⚠️  deviceSerial=" + deviceSerial + "에 연결된 유저 없음");
+        		}
         		
         	} else {
         		// 유저 모드: 알림 수신 처리 (UI 표시 등)
@@ -270,7 +275,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
             MqttMessage msg = new MqttMessage(notification.getBytes());
             msg.setQos(1);
             this.client.publish(userTopic, msg);
-            System.out.println("📢 알림 중계 발행: " + userTopic + " → " + notification);
+            System.out.println("알림 발행: " + userTopic + " → " + notification);
         } catch (MqttException me) {
             me.printStackTrace();
         }
