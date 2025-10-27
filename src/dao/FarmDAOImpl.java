@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import dto.FarmDTO;
 import dto.MemberDTO;
+import dto.PresetDTO;
 import util.DBUtil;
 
 public class FarmDAOImpl implements FarmDAO {
@@ -144,5 +145,64 @@ public class FarmDAOImpl implements FarmDAO {
 	        DBUtil.close(null, ptmt, con);
 	    }
 		return result;
+	}
+	
+	public String getPlantName(String farmUid) {
+		String sql1 = "SELECT p.plant_name\n"
+				    + "FROM plant_presets p\n"
+				    + "INNER JOIN farms f\n"
+				    + "    ON p.preset_uid = f.preset_uid\n"
+				    + "where f.farm_uid = ?";
+		Connection con = null;
+		PreparedStatement ptmt =null;
+		ResultSet rs = null;
+		String plantName = null;
+		try {
+			con = DBUtil.getConnect();
+			ptmt =  con.prepareStatement(sql1);
+			ptmt.setString(1, farmUid);
+			rs =  ptmt.executeQuery();
+			if(rs.next()) {
+				plantName = rs.getString(1);
+			}
+			
+		}  catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(rs, ptmt, con);
+		}
+		return plantName;
+	}
+	
+	public PresetDTO selectPresetByFarmUid(String farmUid) {
+		String sql = "SELECT p.*\n"
+				   + "FROM plant_presets p\n"
+				   + "INNER JOIN farms f\n"
+				   + "    ON p.preset_uid = f.preset_uid\n"
+				   + "where farm_uid = ?";
+		Connection con = null;
+		PreparedStatement ptmt = null;
+		PresetDTO presetDTO = new PresetDTO();
+		try {
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+			ptmt.setString(1, farmUid);
+			ResultSet rs = ptmt.executeQuery();
+			if (rs.next()) {
+				presetDTO.setPresetUid(rs.getInt(1));
+				presetDTO.setPlantName(rs.getString(2));
+				presetDTO.setOptimalTemp(rs.getFloat(3));
+				presetDTO.setOptimalHumidity(rs.getFloat(4));
+				presetDTO.setLightIntensity(rs.getFloat(5));
+				presetDTO.setCo2Level(rs.getFloat(6));
+				presetDTO.setSoilMoisture(rs.getFloat(7));
+				presetDTO.setGrowthPeriodDays(rs.getInt(8));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(null, ptmt, con);
+		}
+		return presetDTO;
 	}
 }
