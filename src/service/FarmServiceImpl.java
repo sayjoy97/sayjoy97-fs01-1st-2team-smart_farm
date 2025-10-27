@@ -19,8 +19,8 @@ public class FarmServiceImpl implements FarmService {
 		farmDAO.createFarm(user, dsn);
 	}
 	
-	public void addFarm(String plantName, String farmUid) {
-		farmDAO.addFarm(plantName, farmUid);
+	public int addFarm(String plantName, String farmUid) {
+		return farmDAO.addFarm(plantName, farmUid);
 	}
 
 	@Override

@@ -91,7 +91,7 @@ public class FarmDAOImpl implements FarmDAO {
 			ptmt.setString(2, farmUid);
 			result = ptmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			return 0;
 		} finally {
 			DBUtil.close(null, ptmt, con);
 		}
@@ -99,7 +99,7 @@ public class FarmDAOImpl implements FarmDAO {
 	}
 	
 	public ArrayList<FarmDTO> selectDevicesFarm(MemberDTO user) {
-		String sql1 = "select * from farms where user_uid = ?";
+		String sql1 = "select * from farms where user_uid = ? and preset_uid is not null";
 		Connection con = null;
 		PreparedStatement ptmt =null;
 		ResultSet rs = null;
