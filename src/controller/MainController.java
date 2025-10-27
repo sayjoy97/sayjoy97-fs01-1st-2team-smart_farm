@@ -442,7 +442,6 @@ public class MainController {
 			view.showMessage("10시간 센서 데이터");
 			List<SensorDataDTO> dailyDataList = sensorDataService.getLogsByFarm(farm.getFarmUid(), 10, null);
 			String plantName = farmService.getPlantName(farm.getFarmUid());
-			System.out.print("\n  [" + plantName);
 			List<SensorDataDTO> hoursDataList = new ArrayList<SensorDataDTO>();
 			SensorDataDTO dailyData = new SensorDataDTO();
 			for (SensorDataDTO sensorData : dailyDataList) {
@@ -464,8 +463,7 @@ public class MainController {
 			int[] values = new int[10];
 			int i = 0;
 			double scale = 0;
-			
-			System.out.println(" 온도 변화 그래프]\n");
+			System.out.println("\n  [" + plantName + " 온도 변화 그래프]\n");
 			for (SensorDataDTO dto : hoursDataList) {
 				values[i] = Math.round(dto.getMeasuredTemp());
 			}
