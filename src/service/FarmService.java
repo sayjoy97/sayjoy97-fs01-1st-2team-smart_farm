@@ -11,7 +11,7 @@ public interface FarmService {
 	ArrayList<FarmDTO> selectDevicesFarm(MemberDTO user);
 	void createFarm(MemberDTO user);
 	void createFarm(MemberDTO user, String dsn);
-	void addFarm(String plantName, String farmUid);
+	int addFarm(String plantName, String farmUid);
 	void deleteFarm(String deleteDSN);
 	String getPlantName(String farmUid);
 	PresetDTO selectPresetByFarmUid(String farmUid);

@@ -26,6 +26,7 @@ public class DeviceDAOImpl implements DeviceDAO {
 			result = ptmt1.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return 0;
 		} finally {
 			DBUtil.close(null, ptmt1, con);
 		}
@@ -56,7 +57,7 @@ public class DeviceDAOImpl implements DeviceDAO {
 			
 		}  catch (SQLException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			DBUtil.close(rs, ptmt, con);
 		}
 		return devices;
