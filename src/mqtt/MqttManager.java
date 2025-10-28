@@ -253,10 +253,6 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
         	PresetDTO preset = farmService.selectPresetByFarmUid(farmUid);
         	publishPresetResponse(farmUid, preset);
         	
-        	// 임시: 프리셋이 없다고 가정
-        	publishPresetResponse(farmUid, null);
-        	
-        	System.out.println("⚠️  TODO: DB에서 프리셋 조회 후 publishPresetResponse() 호출 필요");
         }
     }
     

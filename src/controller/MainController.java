@@ -60,7 +60,10 @@ public class MainController {
             case "2":
                 register();
                 break;
-            case "9":
+            case "E":
+                exitProgram();
+                break;
+            case "e":
                 exitProgram();
                 break;
             default:
@@ -108,7 +111,6 @@ public class MainController {
                 				System.out.println("\n엔터를 누르면 로그인 화면으로 이동합니다.");
                 				System.out.println("--------------------------------------------------");
                 				scanner.nextLine();
-                				handleInitialMenu();
                 				break;
                 			} else {
                 				view.showMessage("틀린 답변을 입력하셨습니다.");
@@ -172,10 +174,16 @@ public class MainController {
                     notificationService.deleteNotification(deleteNLUs);
                 }
                 break;
-            case "8":
+            case "B":
                 logout();
                 break;
-            case "9":
+            case "b":
+                logout();
+                break;
+            case "E":
+                exitProgram();
+                break;
+            case "e":
                 exitProgram();
                 break;
             default:
@@ -188,60 +196,96 @@ public class MainController {
         String choice = view.showAddPlantMenu();
         PlantService plantService = new PlantServiceImpl();
         FarmService farmService = new FarmServiceImpl();
-        String[] value = new String[4];
+        String[] values = new String[4];
         PresetDTO preset = null;
         switch (choice) {
             case "1":
                 view.showMessage("상추의 프리셋입니다.");
                 preset = plantService.selectPreset(Integer.parseInt(choice));
-                value = view.showPresetMenu(preset);
-                if (value[3].equals("1")) {
-                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
-                	mqttManager.publishPresetUpdate(value[0],preset);
+                values = view.showPresetMenu(preset);
+                if (values[3].equals("1")) {
+                	int num = farmService.addFarm(values[0], values[1] + ":" + values[2]);
+                	if (num == 0) {
+                		view.showMessage("잘못된 값을 입력하셨습니다.");
+                		System.out.println("\n  엔터를 입력해주세요.");
+                		scanner.nextLine();
+                	} else {
+                		mqttManager.publishPresetUpdate(values[1] + ":" + values[2], preset);
+                	}
                 }
                 break;
             case "2":
                 view.showMessage("딸기의 프리셋입니다.");
                 preset = plantService.selectPreset(Integer.parseInt(choice));
-                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
-                if (value[3].equals("1")) {
-                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
-                	mqttManager.publishPresetUpdate(value[1] + ":" + value[2], preset);
+                values = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                if (values[3].equals("1")) {
+                	int num = farmService.addFarm(values[0], values[1] + ":" + values[2]);
+                	if (num == 0) {
+                		view.showMessage("잘못된 값을 입력하셨습니다.");
+                		System.out.println("\n  엔터를 입력해주세요.");
+                		scanner.nextLine();
+                	} else {
+                		mqttManager.publishPresetUpdate(values[1] + ":" + values[2], preset);
+                	}
                 }
                 break;
             case "3":
                 view.showMessage("바질의 프리셋입니다.");
                 preset = plantService.selectPreset(Integer.parseInt(choice));
-                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
-                if (value[3].equals("1")) {
-                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
-                	mqttManager.publishPresetUpdate(value[1] + ":" + value[2], preset);
+                values = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                if (values[3].equals("1")) {
+                	int num = farmService.addFarm(values[0], values[1] + ":" + values[2]);
+                	if (num == 0) {
+                		view.showMessage("잘못된 값을 입력하셨습니다.");
+                		System.out.println("\n  엔터를 입력해주세요.");
+                		scanner.nextLine();
+                	} else {
+                		mqttManager.publishPresetUpdate(values[1] + ":" + values[2], preset);
+                	}
                 }
                 break;
             case "4":
                 view.showMessage("와사비의 프리셋입니다.");
                 preset = plantService.selectPreset(Integer.parseInt(choice));
-                value = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
-                if (value[3].equals("1")) {
-                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
-                	mqttManager.publishPresetUpdate(value[1] + ":" + value[2], preset);
+                values = view.showPresetMenu(plantService.selectPreset(Integer.parseInt(choice)));
+                if (values[3].equals("1")) {
+                	int num = farmService.addFarm(values[0], values[1] + ":" + values[2]);
+                	if (num == 0) {
+                		view.showMessage("잘못된 값을 입력하셨습니다.");
+                		System.out.println("\n  엔터를 입력해주세요.");
+                		scanner.nextLine();
+                	} else {
+                		mqttManager.publishPresetUpdate(values[1] + ":" + values[2], preset);
+                	}
                 }
                 break;
             case "5":
                 view.showMessage("신규 식물의 프리셋을 설정해 주세요.");
                 PresetDTO presetDTO = view.showAddNewPlantMenu();
-                plantService.addCustomPreset(presetDTO);
-                view.showMessage("기기 시리얼 넘버와 슬롯 번호를 설정해 주세요.");
-                value = view.showPresetMenu(presetDTO);
-                if (value[3].equals("1")) {
-                	farmService.addFarm(value[0], value[1] + ":" + value[2]);
-                	mqttManager.publishPresetUpdate(value[1] + ":" + value[2], preset);
+                if (presetDTO == null) {
+                	view.showMessage("잘못된 값을 입력하셨습니다.");
+        			System.out.println("\n  엔터를 입력해주세요.");
+        			scanner.nextLine();
+                } else {
+                	plantService.addCustomPreset(presetDTO);
+                    view.showMessage("기기 시리얼 넘버와 슬롯 번호를 설정해 주세요.");
+                    values = view.showPresetMenu(presetDTO);
+                    if (values[3].equals("1")) {
+                    	farmService.addFarm(values[0], values[1] + ":" + values[2]);
+                    	mqttManager.publishPresetUpdate(values[1] + ":" + values[2], preset);
+                    }
                 }
                 break;
-            case "8":
+            case "B":
             	handleMainMenu();
                 break;
-            case "9":
+            case "b":
+            	handleMainMenu();
+                break;
+            case "E":
+            	exitProgram();
+                break;
+            case "e":
             	exitProgram();
                 break;
             default:
@@ -253,25 +297,29 @@ public class MainController {
 		view.showMessage("📊 식물 관리 메뉴입니다.");
 		ArrayList<FarmDTO> farms = farmService.selectDevicesFarm(loginSuccessUser);
 		String choice = view.showMyFarmsMenu(farms);
-
-	    try {
-	    	int choiceNum = Integer.parseInt(choice);
-	    	
-	    	if (choiceNum == 8) {
-	    		handleMainMenu();
-	    	} else if (choiceNum == 9) {
-	    		exitProgram();
-	    	} else if (choiceNum >= 1 && choiceNum <= farms.size()) {
-	    		// 선택한 Farm으로 상세 페이지 이동
-	    		FarmDTO selectedFarm = farms.get(choiceNum - 1);
-	    		handleFarmDetailMenu(selectedFarm);
-	    	} else {
+	    if (choice.equalsIgnoreCase("B")) {
+	    	return;
+	    } else if (choice.equalsIgnoreCase("E")) {
+	    	exitProgram();
+	    } else {
+	    	try {
+	    		int choiceNum = Integer.parseInt(choice);
+	    		if (choiceNum >= 1 && choiceNum <= farms.size()) {
+		    		// 선택한 Farm으로 상세 페이지 이동
+		    		FarmDTO selectedFarm = farms.get(choiceNum - 1);
+		    		handleFarmDetailMenu(selectedFarm);
+		    	} else {
+		    		view.showMessage("(!) 잘못된 입력입니다.");
+		    		System.out.print("\n  Enter를 누르세요...");
+        			scanner.nextLine();
+		    		handleManagePlantMenu();
+		    	}
+	    	} catch (NumberFormatException e) {
 	    		view.showMessage("(!) 잘못된 입력입니다.");
-	    		handleManagePlantMenu();
+	    		System.out.print("\n  Enter를 누르세요...");
+    			scanner.nextLine();
+                handleManagePlantMenu();
 	    	}
-	    } catch (NumberFormatException e) {
-	    	view.showMessage("(!) 숫자를 입력해주세요.");
-	    	handleManagePlantMenu();
 	    }
 	}
 
@@ -290,7 +338,7 @@ public class MainController {
 					// 사용자의 등록된 기기 리스트 가져오기 
 					ArrayList<DeviceDTO> devices = deviceService.selectUserDevices(user);
 					view.showInfo(user, devices);
-					System.out.print("\n뒤로가려면 Enter를 누르세요...");
+					System.out.print("\n  뒤로가려면 Enter를 누르세요...");
 					scanner.nextLine(); // 입력 대기 (없으면 바로 다음 메뉴로 넘어감)
 					break;
 				case "2":
@@ -301,71 +349,103 @@ public class MainController {
 
 					switch (updateChoice) {
 		        		case "1": // 비밀번호 변경
+		        			view.showMessage("비밀번호 수정");
 		        			String currentPw = view.getNewValue("현재 비밀번호");
 		        			if (!userUpdate.getPassword().equals(currentPw)) {
-		        				view.showMessage("❌ 현재 비밀번호가 일치하지 않습니다.");
-		        				System.out.print("\n뒤로가려면 Enter를 누르세요...");
+		        				view.showMessage("  ❌ 현재 비밀번호가 일치하지 않습니다.");
+		        				System.out.print("\n  뒤로가려면 Enter를 누르세요...");
 		        				scanner.nextLine();
 		        				break;
 		        			}
 
 		        			String newPw = view.getNewValue("새 비밀번호");
-		        			service.updateUserInfo(userUpdate.getUserUid(), "password", newPw);
-		        			userUpdate.setPassword(newPw);
-		        			view.showMessage("비밀번호가 성공적으로 변경되었습니다!");
-		        			System.out.print("\n뒤로가려면 Enter를 누르세요...");
-		        			scanner.nextLine();
+		        			if (newPw == "") {
+		        				view.showMessage("값이 입력되지 않았습니다.");
+		        				System.out.print("\n  Enter를 누르세요...");
+			        			scanner.nextLine();
+		        			} else {
+		        				service.updateUserInfo(userUpdate.getUserUid(), "password", newPw);
+			        			userUpdate.setPassword(newPw);
+			        			view.showMessage("비밀번호가 성공적으로 변경되었습니다!");
+			        			System.out.print("\n  뒤로가려면 Enter를 누르세요...");
+			        			scanner.nextLine();
+		        			}
 		        			break;
 
 		        		case "2": // 이름 변경
+		        			view.showMessage("이름 수정");
 		        			String oldName = userUpdate.getName(); // 현재 이름 저장
 		        			String newName = view.getNewValue("새 이름");
+		        			if (newName == "") {
+		        				view.showMessage("값이 입력되지 않았습니다.");
+		        				System.out.print("\n  Enter를 누르세요...");
+			        			scanner.nextLine();
+		        			} else {
+		        				service.updateUserInfo(userUpdate.getUserUid(), "name", newName);
+			        			userUpdate.setName(newName); // 세션 반영
 
-		        			service.updateUserInfo(userUpdate.getUserUid(), "name", newName);
-		        			userUpdate.setName(newName); // 세션 반영
-
-		        			// 변경 내역 표시
-		        			view.showMessage("이름이 '" + oldName + "' → '" + newName + "' 로 변경되었습니다!");
-		        			System.out.print("\n뒤로가려면 Enter를 누르세요...");
-		        			scanner.nextLine();
+			        			// 변경 내역 표시
+			        			view.showMessage("이름이 '" + oldName + "' → '" + newName + "' 로 변경되었습니다!");
+			        			System.out.print("\n  뒤로가려면 Enter를 누르세요...");
+			        			scanner.nextLine();
+		        			}
 		        			break;
 
 		        		case "3": //이메일 변경
+		        			view.showMessage("이메일 수정");
 		        			String oldEmail = userUpdate.getEmail(); // 기존 이메일
 		        			String newEmail = view.getNewValue("새 이메일");
+		        			if (newEmail == "") {
+		        				view.showMessage("값이 입력되지 않았습니다.");
+		        				System.out.print("\n  Enter를 누르세요...");
+			        			scanner.nextLine();
+		        			} else {
+		        				service.updateUserInfo(userUpdate.getUserUid(), "email", newEmail);
+			        			userUpdate.setEmail(newEmail); // 세션 반영
 
-		        			service.updateUserInfo(userUpdate.getUserUid(), "email", newEmail);
-		        			userUpdate.setEmail(newEmail); // 세션 반영
-
-		        			// 변경 내역 표시
-		        			view.showMessage("이메일이 '" + oldEmail + "' → '" + newEmail + "' 로 변경되었습니다!");
-		        			System.out.print("\n뒤로가려면 Enter를 누르세요...");
-		        			scanner.nextLine();
+			        			// 변경 내역 표시
+			        			view.showMessage("이메일이 '" + oldEmail + "' → '" + newEmail + "' 로 변경되었습니다!");
+			        			System.out.print("\n  뒤로가려면 Enter를 누르세요...");
+			        			scanner.nextLine();
+		        			}
 		        			break;
 
-		        		case "8": // 뒤로가기
-		        			return;
+		        		case "B": // 뒤로가기
+		        			break;
+		        			
+		        		case "b": // 뒤로가기
+		        			break;
 
 		        		default:
 		        			view.showMessage("(!) 잘못된 입력입니다.");
+		        			System.out.print("\n  Enter를 누르세요...");
+		        			scanner.nextLine();
 					}
 					break;
 				case "3": 
 					view.showMessage("기기 추가입니다.");
         	
 					System.out.print("  [1] 기기 시리얼 넘버 입력 ");
-					System.out.println("\n  [8] 뒤로가기");
+					System.out.println("\n  [B] 뒤로가기");
+					System.out.println("\n--------------------------------------------------");
+					System.out.print("  > 입력: ");
 					dsn = scanner.nextLine().trim();
 
 					if (dsn.equals("1")) {
 						view.showMessage("기기 추가입니다.");
 						dsn = view.showAddDevice();
-						deviceService.addNewDevice(currentUser.getLoginUser(), dsn);
-						farmService.createFarm(currentUser.getLoginUser(), dsn);
+						int num = deviceService.addNewDevice(currentUser.getLoginUser(), dsn);
+						if (num == 0) {
+							view.showMessage("잘못된 값을 입력하셨습니다.");
+							System.out.println("\n  엔터를 눌러주세요.");
+							scanner.nextLine();
+						} else {
+							farmService.createFarm(currentUser.getLoginUser(), dsn);
+						}
 						break;
 					}
-					if (dsn.equals("8")) {
-						return;
+					if (dsn.equalsIgnoreCase("B")) {
+						break;
 					}
 				case "4":
 					view.showMessage("기기 삭제입니다.");
@@ -373,34 +453,47 @@ public class MainController {
 					ArrayList<DeviceDTO> deviceList = deviceService.selectUserDevices(currentUser.getLoginUser());
 					// 메뉴 표시
 					System.out.println("\n  [1] 삭제할 기기 선택");
-					System.out.println("  [8] 뒤로가기");
+					System.out.println("  [B] 뒤로가기");
 					System.out.println("\n--------------------------------------------------");
 					System.out.print("> 입력: ");
 					String input = scanner.nextLine().trim();
 					
-					view.showMessage("기기 삭제입니다.");
 					if (input.equals("1")) {
-						System.out.println("\n  [0] 뒤로가기");
+						view.showMessage("기기 삭제입니다.");
+						System.out.println("\n  [B] 뒤로가기");
 						for (int i = 0; i < deviceList.size(); i++) {
 							dsn = deviceList.get(i).getDeviceSerialNumber();
 							System.out.println("  [" + (i + 1) + "] " + dsn);
 						}
-						int deleteNum = view.showDeleteDevice();
-						if (deleteNum == 0) {
-							return;
-						} else {
-							String DeleteDSN = deviceList.get(deleteNum - 1).getDeviceSerialNumber();
-							farmService.deleteFarm(DeleteDSN);
-							deviceService.deleteDevice(DeleteDSN);
+						String deleteNum = view.showDeleteDevice();
+						if (deleteNum.equalsIgnoreCase("B")) {
 							break;
+						} else {
+							try {
+								String DeleteDSN = deviceList.get(Integer.parseInt(deleteNum) - 1).getDeviceSerialNumber();
+								farmService.deleteFarm(DeleteDSN);
+								deviceService.deleteDevice(DeleteDSN);
+								break;
+							} catch (Exception e) {
+								view.showMessage("기기 번호를 잘못 입력하셨습니다.");
+								System.out.println("\n  엔터를 눌러주세요.");
+								scanner.nextLine();
+								break;
+							}
 						}
+					} else if (input.equalsIgnoreCase("B")) {
+						break;
+					} else {
+						view.showMessage("잘못된 값을 입력하셨습니다.");
+						System.out.println("\n  엔터를 눌러주세요.");
+						scanner.nextLine();
+						break;
 					}
-					if (input.equals("8")) {
-						return;
-					}
-				case "8":
+				case "B":
 					return;
-				case "9":
+				case "b":
+					return;
+				case "E":
 					exitProgram();
 					break;
 				default:
@@ -434,53 +527,120 @@ public class MainController {
 		case "1":
 			view.showMessage("센서 데이터 기록 (최근 10개)");
 			view.showSensorDataList(farm.getFarmUid());
-			System.out.print("\n계속하려면 Enter를 누르세요...");
+			System.out.print("\n  계속하려면 Enter를 누르세요...");
 			scanner.nextLine();
 			handleFarmDetailMenu(farm);
 			break;
 		case "2":
 			view.showMessage("10시간 센서 데이터");
 			List<SensorDataDTO> dailyDataList = sensorDataService.getLogsByFarm(farm.getFarmUid(), 10, null);
-			String plantName = farmService.getPlantName(farm.getFarmUid());
-			List<SensorDataDTO> hoursDataList = new ArrayList<SensorDataDTO>();
-			SensorDataDTO dailyData = new SensorDataDTO();
-			for (SensorDataDTO sensorData : dailyDataList) {
-				float measuredTemp = 0;
-				float measuredHumidity = 0;
-				float measuredLight = 0;
-				float measuredCo2 = 0;
-				float measuredSoilMoisture = 0;
-				for (int i = 0; i <= 360; i+=90) {
-					measuredTemp += sensorData.getMeasuredTemp();
-					measuredHumidity += sensorData.getMeasuredHumidity();
-					measuredLight += sensorData.getMeasuredLight();
-					measuredCo2 += sensorData.getMeasuredCo2();
-					measuredSoilMoisture += sensorData.getMeasuredSoilMoisture();
+			if(dailyDataList != null && !dailyDataList.isEmpty()) {
+				String plantName = farmService.getPlantName(farm.getFarmUid());
+				List<SensorDataDTO> hoursDataList = new ArrayList<SensorDataDTO>();
+				//SensorDataDTO dailyData = new SensorDataDTO();
+				for (SensorDataDTO sensorData : dailyDataList) {
+					float measuredTemp = 0;
+					float measuredHumidity = 0;
+					float measuredLight = 0;
+					float measuredCo2 = 0;
+					float measuredSoilMoisture = 0;
+					for (int i = 0; i <= 360; i+=90) {
+						measuredTemp += sensorData.getMeasuredTemp();
+						measuredHumidity += sensorData.getMeasuredHumidity();
+						measuredLight += sensorData.getMeasuredLight();
+						measuredCo2 += sensorData.getMeasuredCo2();
+						measuredSoilMoisture += sensorData.getMeasuredSoilMoisture();
+					}
+					hoursDataList.add(new SensorDataDTO(0, null, null, measuredTemp / 4, measuredHumidity / 4, measuredLight / 4, measuredCo2 / 4, measuredSoilMoisture / 4));
 				}
-				hoursDataList.add(new SensorDataDTO(0, null, null, measuredTemp / 4, measuredHumidity / 4, measuredLight / 4, measuredCo2 / 4, measuredSoilMoisture / 4));
+				PresetDTO presetDTO = farmService.selectPresetByFarmUid(farm.getFarmUid());
+				int[] values = new int[10];
+				int i = 0;
+				double scale = 0;
+				String unit = null;
+				System.out.println("\n  [" + plantName + " 온도 변화 그래프]\n");
+				for (SensorDataDTO dto : hoursDataList) {
+					values[i] = Math.round(dto.getMeasuredTemp());
+				}
+				// 더미 데이터 삽입
+				values[0] = 20;
+				values[1] = 19;
+				values[2] = 20;
+				values[3] = 21;
+				values[4] = 18;
+				values[5] = 19;
+				values[6] = 20;
+				values[7] = 18;
+				values[8] = 17;
+				values[9] = 19;
+				double referenceTickValue = presetDTO.getOptimalTemp();
+				scale = 1;
+				unit = "℃";
+				makeGraph(values, referenceTickValue, scale, unit);
+				
+				System.out.println("\n  [" + plantName + " 습도 변화 그래프]\n");
+				for (SensorDataDTO dto : hoursDataList) {
+					values[i] = Math.round(dto.getMeasuredHumidity());
+				}
+				// 더미 데이터 삽입
+				values[0] = 65;
+				values[1] = 68;
+				values[2] = 73;
+				values[3] = 66;
+				values[4] = 53;
+				values[5] = 65;
+				values[6] = 71;
+				values[7] = 63;
+				values[8] = 69;
+				values[9] = 70;
+				referenceTickValue = presetDTO.getOptimalHumidity();
+				scale = 5;
+				unit = "%";
+				makeGraph(values, referenceTickValue, scale, unit);
+				
+				////////////// 광량
+				
+				System.out.println("\n  [" + plantName + " 이산화탄소 농도 변화 그래프]\n");
+				for (SensorDataDTO dto : hoursDataList) {
+					values[i] = Math.round(dto.getMeasuredCo2());
+				}
+				// 더미 데이터 삽입
+				values[0] = 900;
+				values[1] = 822;
+				values[2] = 833;
+				values[3] = 966;
+				values[4] = 1000;
+				values[5] = 920;
+				values[6] = 836;
+				values[7] = 963;
+				values[8] = 820;
+				values[9] = 730;
+				referenceTickValue = presetDTO.getCo2Level();
+				scale = 100;
+				unit = "ppm";
+				makeGraph(values, referenceTickValue, scale, unit);
+				
+				
+				System.out.print("\n  계속하려면 Enter를 누르세요...");
+				scanner.nextLine();
+				handleFarmDetailMenu(farm);
+				break;
+			} else {
+				System.out.println("  (!) 센서 데이터가 없습니다.\n");
+				System.out.print("\n  계속하려면 Enter를 누르세요...");
+				scanner.nextLine();
+				//break;
 			}
-			PresetDTO presetDTO = farmService.selectPresetByFarmUid(farm.getFarmUid());
-			int[] values = new int[10];
-			int i = 0;
-			double scale = 0;
-			System.out.println("\n  [" + plantName + " 온도 변화 그래프]\n");
-			for (SensorDataDTO dto : hoursDataList) {
-				values[i] = Math.round(dto.getMeasuredTemp());
-			}
-			double referenceTickValue = presetDTO.getOptimalTemp();
-			scale = 1;
-			
-			makeGraph(values, referenceTickValue, scale);
-			
-			
-			System.out.print("\n계속하려면 Enter를 누르세요...");
-			scanner.nextLine();
-			handleFarmDetailMenu(farm);
-			break;
-		case "8":
+		case "B":
 			handleManagePlantMenu();
 			break;
-		case "9":
+		case "b":
+			handleManagePlantMenu();
+			break;
+		case "E":
+			exitProgram();
+			break;
+		case "e":
 			exitProgram();
 			break;
 		default:
@@ -489,21 +649,10 @@ public class MainController {
 		}
 	}
 	
-	private void makeGraph(int[] values, double referenceTickValue, double scale) {
+	private void makeGraph(int[] values, double referenceTickValue, double scale, String unit) {
 		int maxValue = 0;
 		int minValue = 10000;
 		double level = 0;
-		// 더미 데이터 삽입
-		values[0] = 20;
-		values[1] = 19;
-		values[2] = 20;
-		values[3] = 21;
-		values[4] = 18;
-		values[5] = 19;
-		values[6] = 20;
-		values[7] = 18;
-		values[8] = 17;
-		values[9] = 19;
 		for (int value : values) {
 			if (value > maxValue) {
 				maxValue = value;
@@ -512,26 +661,44 @@ public class MainController {
 				minValue = value;
 			}
 		}
-		if (minValue >= (int)referenceTickValue) {
+		if (maxValue <= (int)referenceTickValue) {
+			maxValue = (int)referenceTickValue;
+			minValue -= minValue % (int)scale;
+		} else {
 			minValue = (int)referenceTickValue;
+			maxValue -= maxValue % (int)scale;
 		}
-		int blank = Double.toString(referenceTickValue).length();
-		System.out.println(" ".repeat(blank) + " |                                                  ");
-		for (level = maxValue; level > minValue; level -= scale) {
-			System.out.print(level + " |");
-			for (int i = 9; i >= 0; i--) {
-				if (values[i] >= level) {
-					System.out.print(" ■■");
-				} else {
-					System.out.print("   ");
+		System.out.println("          |                                                   (단위 : " + unit + ")");
+		for (level = maxValue; level >= minValue; level -= scale) {
+			if (level == referenceTickValue) {
+				System.out.printf("\u001B[31m%9.1f\u001B[0m", level);
+				System.out.print(" |");
+				for (int i = 9; i >= 0; i--) {
+					if (values[i] >= level) {
+						System.out.print("\u001B[31m ■■\u001B[0m");
+					} else {
+						System.out.print("   ");
+					}
+					System.out.print("  ");
 				}
-				System.out.print("  ");
+			} else {
+				System.out.printf("%9.1f", level);
+				System.out.print(" |");
+				for (int i = 9; i >= 0; i--) {
+					if (values[i] >= level) {
+						System.out.print(" ■■");
+					} else {
+						System.out.print("   ");
+					}
+					System.out.print("  ");
+				}
 			}
 			System.out.println("");
 		}
-		System.out.println((level - scale) + " | ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■  ");
-		System.out.println(" ".repeat(blank) + " +----+----+----+----+----+----+----+----+----+----+");
-		System.out.print(" ".repeat(blank) + " |");
+		System.out.printf("%9.1f", (level - scale));
+		System.out.println(" | ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■  ");
+		System.out.println("          +----+----+----+----+----+----+----+----+----+----+");
+		System.out.print("          |");
 		for (int i = 9; i >= 0; i--) {
 			if (((LocalTime.now().getHour() + 24 - i) % 24) == 0) {
 				System.out.print(" 24");
@@ -542,7 +709,7 @@ public class MainController {
 			}
 			System.out.print(" |");
 		}
-		System.out.println(" (단위 : ℃)");
+		System.out.println("");
 	}
 	
 //	private int[] insertValue(List<SensorDataDTO> hoursDataList, String str) {
@@ -584,7 +751,7 @@ public class MainController {
 		view.showMessage("⚙️ 알림 관리 메뉴입니다.");
 		NotificationService notificationService = new NotificationServiceImpl();
 		ArrayList<String> notifications = notificationService.showNotification(currentUser.getLoginUser());
-		int repeat = 35;
+		int repeat = 47;
 		for (int i = 0; i < notifications.size(); i++) {
 			String[] notification = notifications.get(i).split("/");
 			System.out.println("\n[" + (i + 1) + "]" + "-".repeat(repeat));
