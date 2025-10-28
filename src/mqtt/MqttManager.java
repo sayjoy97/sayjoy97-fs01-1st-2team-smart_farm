@@ -12,6 +12,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import dto.PresetDTO;
 import service.DeviceService;
 import service.DeviceServiceImpl;
+import service.FarmService;
+import service.FarmServiceImpl;
 import service.NotificationService;
 import service.NotificationServiceImpl;
 import service.SensorDataService;
@@ -27,7 +29,7 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
     private SensorDataService sensorService = new SensorDataServiceImpl();
     private NotificationService notificationService = new NotificationServiceImpl();
     private DeviceService deviceService = new DeviceServiceImpl();
-
+    private FarmService farmService = new FarmServiceImpl();
     public String getPubTopic() {
 		return pubTopic;
 	}
@@ -248,9 +250,8 @@ public class MqttManager implements MqttCallback { // MqttCallback을 직접 구
         	String farmUid = payload; // 예: "A1001:1"
         	System.out.println("프리셋 요청 수신: " + farmUid);
         	
-        	// TODO: DB에서 farmUid에 해당하는 프리셋 조회
-        	// PresetDTO preset = presetService.findByFarmUid(farmUid);
-        	// publishPresetResponse(farmUid, preset);
+        	PresetDTO preset = farmService.selectPresetByFarmUid(farmUid);
+        	publishPresetResponse(farmUid, preset);
         	
         	// 임시: 프리셋이 없다고 가정
         	publishPresetResponse(farmUid, null);
