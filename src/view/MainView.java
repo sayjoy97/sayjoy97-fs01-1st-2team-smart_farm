@@ -204,6 +204,7 @@ public class MainView {
 		System.out.println("  [예상 생장 기간(일)] " + presetDTO.getGrowthPeriodDays());
 		System.out.println("\n--------------------------------------------------");
 		values[0] = presetDTO.getPlantName();
+		scanner.nextLine();
 		System.out.print("  기기 시리얼 넘버를 입력해주세요: ");
 		values[1] = scanner.nextLine();
 		System.out.print("  슬롯 번호를 입력하세요: ");

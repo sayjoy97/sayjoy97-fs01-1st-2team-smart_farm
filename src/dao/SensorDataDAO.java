@@ -11,4 +11,5 @@ public interface SensorDataDAO {
 	List<SensorDataDTO> getLogsByFarm(String farmUid, Integer hours, Integer limit);
 	// 사용자별 로그를 전체 읽거나, 시간에 따라 읽거나, 갯수에 따라 읽기 
 	List<SensorDataDTO> getLogsByUser(int userUid, Integer hours, Integer limit);
+	List<SensorDataDTO> getLogsForGraph(String farmUid);
 }

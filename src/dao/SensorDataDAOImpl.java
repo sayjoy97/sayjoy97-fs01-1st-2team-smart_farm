@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +136,7 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 	                rs.getTimestamp("recorded_at"),
 	                rs.getFloat("measured_temp"),
 	                rs.getFloat("measured_humidity"),
-	                rs.getFloat("measuredLight"),
+	                rs.getFloat("measured_light"),
 	                rs.getFloat("measured_co2"),
 	                rs.getFloat("measured_soil_moisture")
 	            );
@@ -148,5 +149,56 @@ public class SensorDataDAOImpl implements SensorDataDAO {
 		
 		return list;
 		
+	}
+	
+	public List<SensorDataDTO> getLogsForGraph(String farmUid) {
+		String sql = "SELECT\n"
+				   + "    DATE_FORMAT(recorded_at, '%Y-%m-%d %H:00:00') as recorded_hour,\n"
+				   + "    AVG(measured_temp) as avg_temp, \n"
+				   + "    AVG(measured_humidity) as avg_humidity,\n"
+				   + "    AVG(measured_light) as avg_light,\n"
+				   + "    AVG(measured_co2) as avg_co2,\n"
+				   + "    AVG(measured_soil_moisture) as avg_soil_moisture\n"
+				   + "FROM sensor_logs\n"
+				   + "WHERE farm_uid = ?\n"
+				   + "    AND recorded_at >= (\n"
+				   + "        SELECT DATE_SUB(MAX(recorded_at), INTERVAL 9 HOUR)\n"
+				   + "        FROM sensor_logs\n"
+				   + "        WHERE farm_uid = ?\n"
+				   + "    )\n"
+				   + "GROUP BY recorded_hour\n"
+				   + "ORDER BY recorded_hour DESC";
+	    Connection con = null;
+	    PreparedStatement ptmt = null;
+	    ResultSet rs = null;
+	    ArrayList<SensorDataDTO> list = new ArrayList<>();
+	    try {
+	        con = DBUtil.getConnect();
+	        ptmt = con.prepareStatement(sql);
+	        ptmt.setString(1, farmUid);
+	        ptmt.setString(2, farmUid);
+	        rs = ptmt.executeQuery();
+	        while (rs.next()) {
+	            Timestamp recorededAt = Timestamp.valueOf(rs.getString("recorded_hour"));
+	        	
+	        	SensorDataDTO s = new SensorDataDTO(
+	                0,
+	                farmUid,
+	                recorededAt,
+	                rs.getFloat("avg_temp"),
+	                rs.getFloat("avg_humidity"),
+	                rs.getFloat("avg_light"),
+	                rs.getFloat("avg_co2"),
+	                rs.getFloat("avg_soil_moisture")
+	            );
+	            list.add(s);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBUtil.close(rs, ptmt, con);
+	    }
+	    return list;
 	}
 }
