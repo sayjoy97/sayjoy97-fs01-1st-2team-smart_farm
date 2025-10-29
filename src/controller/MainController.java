@@ -533,92 +533,56 @@ public class MainController {
 			break;
 		case "2":
 			view.showMessage("10시간 센서 데이터");
-			List<SensorDataDTO> dailyDataList = sensorDataService.getLogsByFarm(farm.getFarmUid(), 10, null);
-			if(dailyDataList != null && !dailyDataList.isEmpty()) {
+			List<SensorDataDTO> hoursDataList = sensorDataService.getLogsForGraph(farm.getFarmUid());
+			if(hoursDataList != null && !hoursDataList.isEmpty()) {
 				String plantName = farmService.getPlantName(farm.getFarmUid());
-				List<SensorDataDTO> hoursDataList = new ArrayList<SensorDataDTO>();
-				//SensorDataDTO dailyData = new SensorDataDTO();
-				for (SensorDataDTO sensorData : dailyDataList) {
-					float measuredTemp = 0;
-					float measuredHumidity = 0;
-					float measuredLight = 0;
-					float measuredCo2 = 0;
-					float measuredSoilMoisture = 0;
-					for (int i = 0; i <= 360; i+=90) {
-						measuredTemp += sensorData.getMeasuredTemp();
-						measuredHumidity += sensorData.getMeasuredHumidity();
-						measuredLight += sensorData.getMeasuredLight();
-						measuredCo2 += sensorData.getMeasuredCo2();
-						measuredSoilMoisture += sensorData.getMeasuredSoilMoisture();
-					}
-					hoursDataList.add(new SensorDataDTO(0, null, null, measuredTemp / 4, measuredHumidity / 4, measuredLight / 4, measuredCo2 / 4, measuredSoilMoisture / 4));
-				}
+				
+				int[] avgTemp = new int[hoursDataList.size()];
+				int[] avgHumidity = new int[hoursDataList.size()];
+				int[] avgLight = new int[hoursDataList.size()];
+				int[] avgCo2 = new int[hoursDataList.size()];
+				int[] avgSoilMoisture = new int[hoursDataList.size()];
+				int[] hours = new int[hoursDataList.size()];
+				
 				PresetDTO presetDTO = farmService.selectPresetByFarmUid(farm.getFarmUid());
-				int[] values = new int[10];
-				int i = 0;
-				double scale = 0;
-				String unit = null;
-				System.out.println("\n  [" + plantName + " 온도 변화 그래프]\n");
-				for (SensorDataDTO dto : hoursDataList) {
-					values[i] = Math.round(dto.getMeasuredTemp());
+				for (int i = 0; i < hoursDataList.size(); i++) {
+					avgTemp[i] = (int)Math.round(hoursDataList.get(i).getMeasuredTemp());
+					avgHumidity[i] = (int)Math.round(hoursDataList.get(i).getMeasuredHumidity());
+					avgLight[i] = (int)Math.round(hoursDataList.get(i).getMeasuredLight());
+					avgCo2[i] = (int)Math.round(hoursDataList.get(i).getMeasuredCo2());
+					avgSoilMoisture[i] = (int)Math.round(hoursDataList.get(i).getMeasuredSoilMoisture());
+					hours[i] = hoursDataList.get(i).getRecordedAt().toLocalDateTime().getHour();
 				}
-				// 더미 데이터 삽입
-				values[0] = 20;
-				values[1] = 19;
-				values[2] = 20;
-				values[3] = 21;
-				values[4] = 18;
-				values[5] = 19;
-				values[6] = 20;
-				values[7] = 18;
-				values[8] = 17;
-				values[9] = 19;
-				double referenceTickValue = presetDTO.getOptimalTemp();
-				scale = 1;
-				unit = "℃";
-				makeGraph(values, referenceTickValue, scale, unit);
+				
+				System.out.println("\n  [" + plantName + " 온도 변화 그래프]\n");
+				
+//				더미데이터
+//				avgTemp[0] = 23;
+//				avgTemp[1] = 22;
+//				avgTemp[2] = 21;
+//				avgTemp[3] = 20;
+//				avgTemp[4] = 19;
+//				avgTemp[5] = 20;
+//				avgTemp[6] = 21;
+//				avgTemp[7] = 23;
+//				avgTemp[8] = 24;
+//				avgTemp[9] = 24;
+				
+				sensorDataService.makeGraph(avgTemp, hours, presetDTO.getOptimalTemp(), 0.5, "℃");
 				
 				System.out.println("\n  [" + plantName + " 습도 변화 그래프]\n");
-				for (SensorDataDTO dto : hoursDataList) {
-					values[i] = Math.round(dto.getMeasuredHumidity());
-				}
-				// 더미 데이터 삽입
-				values[0] = 65;
-				values[1] = 68;
-				values[2] = 73;
-				values[3] = 66;
-				values[4] = 53;
-				values[5] = 65;
-				values[6] = 71;
-				values[7] = 63;
-				values[8] = 69;
-				values[9] = 70;
-				referenceTickValue = presetDTO.getOptimalHumidity();
-				scale = 5;
-				unit = "%";
-				makeGraph(values, referenceTickValue, scale, unit);
+				sensorDataService.makeGraph(avgHumidity, hours, presetDTO.getOptimalHumidity(), 5, "%");
 				
-				////////////// 광량
+				System.out.println("\n  [" + plantName + " 광량 변화 그래프]\n");
+				sensorDataService.makeGraph(avgLight, hours, presetDTO.getLightIntensity(), 5, "℃");
 				
-				System.out.println("\n  [" + plantName + " 이산화탄소 농도 변화 그래프]\n");
-				for (SensorDataDTO dto : hoursDataList) {
-					values[i] = Math.round(dto.getMeasuredCo2());
+				if (farm.getFarmUid().charAt(0) == 'A') {
+					System.out.println("\n  [" + plantName + " 이산화탄소 농도 변화 그래프]\n");
+					sensorDataService.makeGraph(avgCo2, hours, presetDTO.getCo2Level(), 50, "ppm");
 				}
-				// 더미 데이터 삽입
-				values[0] = 900;
-				values[1] = 822;
-				values[2] = 833;
-				values[3] = 966;
-				values[4] = 1000;
-				values[5] = 920;
-				values[6] = 836;
-				values[7] = 963;
-				values[8] = 820;
-				values[9] = 730;
-				referenceTickValue = presetDTO.getCo2Level();
-				scale = 100;
-				unit = "ppm";
-				makeGraph(values, referenceTickValue, scale, unit);
+				
+				System.out.println("\n  [" + plantName + " 토양 수분 변화 그래프]\n");
+				sensorDataService.makeGraph(avgSoilMoisture, hours, presetDTO.getSoilMoisture(), 1, "%");
 				
 				
 				System.out.print("\n  계속하려면 Enter를 누르세요...");
@@ -648,104 +612,6 @@ public class MainController {
 			handleFarmDetailMenu(farm);
 		}
 	}
-	
-	private void makeGraph(int[] values, double referenceTickValue, double scale, String unit) {
-		int maxValue = 0;
-		int minValue = 10000;
-		double level = 0;
-		for (int value : values) {
-			if (value > maxValue) {
-				maxValue = value;
-			}
-			if (value < minValue) {
-				minValue = value;
-			}
-		}
-		if (maxValue <= (int)referenceTickValue) {
-			maxValue = (int)referenceTickValue;
-			minValue -= minValue % (int)scale;
-		} else {
-			minValue = (int)referenceTickValue;
-			maxValue -= maxValue % (int)scale;
-		}
-		System.out.println("          |                                                   (단위 : " + unit + ")");
-		for (level = maxValue; level >= minValue; level -= scale) {
-			if (level == referenceTickValue) {
-				System.out.printf("\u001B[31m%9.1f\u001B[0m", level);
-				System.out.print(" |");
-				for (int i = 9; i >= 0; i--) {
-					if (values[i] >= level) {
-						System.out.print("\u001B[31m ■■\u001B[0m");
-					} else {
-						System.out.print("   ");
-					}
-					System.out.print("  ");
-				}
-			} else {
-				System.out.printf("%9.1f", level);
-				System.out.print(" |");
-				for (int i = 9; i >= 0; i--) {
-					if (values[i] >= level) {
-						System.out.print(" ■■");
-					} else {
-						System.out.print("   ");
-					}
-					System.out.print("  ");
-				}
-			}
-			System.out.println("");
-		}
-		System.out.printf("%9.1f", (level - scale));
-		System.out.println(" | ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■  ");
-		System.out.println("          +----+----+----+----+----+----+----+----+----+----+");
-		System.out.print("          |");
-		for (int i = 9; i >= 0; i--) {
-			if (((LocalTime.now().getHour() + 24 - i) % 24) == 0) {
-				System.out.print(" 24");
-			} else if (((LocalTime.now().getHour() + 24 - i) % 24) < 10) {
-				System.out.print(" 0" + ((LocalTime.now().getHour() + 24 - i) % 24));
-			} else {
-				System.out.print(" " + ((LocalTime.now().getHour() + 24 - i) % 24));
-			}
-			System.out.print(" |");
-		}
-		System.out.println("");
-	}
-	
-//	private int[] insertValue(List<SensorDataDTO> hoursDataList, String str) {
-//		int[] values = new int[10];
-//		int i = 0;
-//		switch (str) {
-//			case "measuredTemp":
-//				for (SensorDataDTO dto : hoursDataList) {
-//					values[i] = Math.round(dto.getMeasuredTemp());
-//				}
-//				break;
-//			case "measuredHumidity":
-//				for (SensorDataDTO dto : hoursDataList) {
-//					values[i] = Math.round(dto.getMeasuredTemp());
-//				}
-//				break;
-//			case "measuredLight":
-//				for (SensorDataDTO dto : hoursDataList) {
-//					values[i] = Math.round(dto.getMeasuredTemp());
-//				}
-//				break;
-//			case "measuredCo2":
-//				for (SensorDataDTO dto : hoursDataList) {
-//					values[i] = Math.round(dto.getMeasuredTemp());
-//				}
-//				break;
-//			case "measuredSoilMoisture":
-//				for (SensorDataDTO dto : hoursDataList) {
-//					values[i] = Math.round(dto.getMeasuredTemp());
-//				}
-//				break;
-//			default:
-//				break;
-//		}
-//		return values;
-//	}
 	
 	private ArrayList<String> handleNotificationManagementMenu() {
 		view.showMessage("⚙️ 알림 관리 메뉴입니다.");

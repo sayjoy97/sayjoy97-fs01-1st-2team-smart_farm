@@ -1,6 +1,8 @@
 package service;
 
 import java.sql.Timestamp;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import dao.SensorDataDAO;
@@ -74,7 +76,80 @@ public class SensorDataServiceImpl implements SensorDataService{
 	public List<SensorDataDTO> getLogsByUser(int userUid, Integer hours, Integer limit) {
 		return dao.getLogsByUser(userUid, hours, limit);
 	}
-
-
 	
+	public List<SensorDataDTO> getLogsForGraph(String farmUid) {
+		return dao.getLogsForGraph(farmUid);
+	}
+
+	public void makeGraph(int[] values, int[] hours, double referenceTickValue, double scale, String unit) {
+		int maxValue = 0;
+		int minValue = 10000;
+		double level = 0;
+		for (int value : values) {
+			if (value >= maxValue) {
+				maxValue = value;
+			}
+			if (value < minValue) {
+				minValue = value;
+			}
+		}
+		if (maxValue <= (int)referenceTickValue) {
+			maxValue = (int)referenceTickValue;
+			minValue -= minValue % scale;
+		} else {
+			double d = referenceTickValue;
+			while (maxValue <= d) {
+				d += scale;
+			}
+			maxValue = (int)d;
+			if (minValue >= (int)referenceTickValue) {
+				minValue = (int)referenceTickValue;
+			} else {
+				minValue -= minValue % scale;
+			}
+		}
+		System.out.println("          |                                                   (단위 : " + unit + ")");
+		for (level = maxValue; level >= minValue; level -= scale) {
+			if (level == referenceTickValue) {
+				System.out.printf("\u001B[31m%9.1f\u001B[0m", level);
+				System.out.print(" |");
+				for (int i = values.length - 1; i >= 0; i--) {
+					if (values[i] >= level) {
+						System.out.print("\u001B[31m ■■\u001B[0m");
+					} else {
+						System.out.print("   ");
+					}
+					System.out.print("  ");
+				}
+			} else {
+				System.out.printf("%9.1f", level);
+				System.out.print(" |");
+				for (int i = 9; i >= 0; i--) {
+					if (values[i] >= level) {
+						System.out.print(" ■■");
+					} else {
+						System.out.print("   ");
+					}
+					System.out.print("  ");
+				}
+			}
+			System.out.println("");
+		}
+		System.out.printf("%9.1f", level);
+		System.out.println(" | ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■   ■■  ");
+		System.out.println("          +----+----+----+----+----+----+----+----+----+----+");
+		System.out.print("          |");
+		for (int i = hours.length - 1; i >= 0; i--) {
+			
+			if (((hours[i] + 24) % 24) == 0) {
+				System.out.print(" 24");
+			} else if (((hours[i] + 24) % 24) < 10) {
+				System.out.print(" 0" + ((hours[i] + 24) % 24));
+			} else {
+				System.out.print(" " + ((hours[i] + 24) % 24));
+			}
+			System.out.print(" |");
+		}
+		System.out.println("");
+	}
 }
