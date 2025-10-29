@@ -12,9 +12,9 @@ public class SensorDataServiceImpl implements SensorDataService{
 	@Override
 	public void saveData(String topic, String payload) {
 		try {
-		// 1. 토픽 파싱: {userId}/smartfarm/{farmUid}/sensor/data
+		// 1. 토픽 파싱: smartfarm/{farmUid}/sensor/data
         String[] parts = topic.split("/");
-        String farmUid = parts[2]; // farmUid 추출 (예: A101:1)
+        String farmUid = parts[1]; // farmUid 추출 (예: A101:1)
         float temp = 0, humidity = 0, measuredLight = 0, co2 = 0, soil = 0;
         
         // 2. payload 구조 (예: "temp=23.5;hum=60;co2=800;soil=420;")
