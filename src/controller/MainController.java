@@ -574,7 +574,12 @@ public class MainController {
 				sensorDataService.makeGraph(avgHumidity, hours, presetDTO.getOptimalHumidity(), 5, "%");
 				
 				System.out.println("\n  [" + plantName + " 광량 변화 그래프]\n");
-				sensorDataService.makeGraph(avgLight, hours, presetDTO.getLightIntensity(), 5, "℃");
+				for (int i = 0; i < avgLight.length; i++) {
+					if (avgLight[i] >= 1200) {
+						avgLight[i] = 1200;
+					}
+				}
+				sensorDataService.makeGraph(avgLight, hours, presetDTO.getLightIntensity(), 200, "아날로그");
 				
 				if (farm.getFarmUid().charAt(0) == 'A') {
 					System.out.println("\n  [" + plantName + " 이산화탄소 농도 변화 그래프]\n");
@@ -582,7 +587,10 @@ public class MainController {
 				}
 				
 				System.out.println("\n  [" + plantName + " 토양 수분 변화 그래프]\n");
-				sensorDataService.makeGraph(avgSoilMoisture, hours, presetDTO.getSoilMoisture(), 1, "%");
+				for (int i = 0; i < avgSoilMoisture.length; i++) {
+					
+				}
+				sensorDataService.makeGraph(avgSoilMoisture, hours, presetDTO.getSoilMoisture(), 10, "%");
 				
 				
 				System.out.print("\n  계속하려면 Enter를 누르세요...");
