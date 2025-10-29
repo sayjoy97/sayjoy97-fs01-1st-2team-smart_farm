@@ -587,8 +587,31 @@ public class MainController {
 				}
 				
 				System.out.println("\n  [" + plantName + " 토양 수분 변화 그래프]\n");
+				
 				for (int i = 0; i < avgSoilMoisture.length; i++) {
-					
+					if (avgSoilMoisture[i] >= 10555) {
+						avgSoilMoisture[i] = 100;
+					} else if (avgSoilMoisture[i] >= 95000) {
+						avgSoilMoisture[i] = 90;
+					} else if (avgSoilMoisture[i] >= 84444) {
+						avgSoilMoisture[i] = 80;
+					} else if (avgSoilMoisture[i] >= 73888) {
+						avgSoilMoisture[i] = 70;
+					} else if (avgSoilMoisture[i] >= 63333) {
+						avgSoilMoisture[i] = 60;
+					} else if (avgSoilMoisture[i] >= 52777) {
+						avgSoilMoisture[i] = 50;
+					} else if (avgSoilMoisture[i] >= 42222) {
+						avgSoilMoisture[i] = 40;
+					} else if (avgSoilMoisture[i] >= 31666) {
+						avgSoilMoisture[i] = 30;
+					} else if (avgSoilMoisture[i] >= 21111) {
+						avgSoilMoisture[i] = 20;
+					} else if (avgSoilMoisture[i] >= 10555) {
+						avgSoilMoisture[i] = 10;
+					} else {
+						avgSoilMoisture[i] = 0;
+					}
 				}
 				sensorDataService.makeGraph(avgSoilMoisture, hours, presetDTO.getSoilMoisture(), 10, "%");
 				
