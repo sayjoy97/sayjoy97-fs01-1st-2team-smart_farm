@@ -170,6 +170,7 @@ public class MainView {
 		System.out.print("> 입력: ");
 		return scanner.nextLine();
 	}
+	
 	public PresetDTO showAddNewPlantMenu() {
 		PresetDTO presetDTO = new PresetDTO();
 		try {
@@ -187,6 +188,30 @@ public class MainView {
 			presetDTO.setSoilMoisture(scanner.nextFloat());
 			System.out.print("  [예상 생장 기간(일)]: ");
 			presetDTO.setGrowthPeriodDays(scanner.nextInt());
+		} catch (InputMismatchException e) {
+			return null;
+		}
+		return presetDTO;
+	}
+	
+	public PresetDTO showUpdatePlantMenu(PresetDTO presetDTO) {
+		try {
+			System.out.println("  [식물 이름]: " + presetDTO.getPlantName());
+			System.out.print("  [온도 설정] " + presetDTO.getOptimalTemp() + " -> ");
+			presetDTO.setOptimalTemp(scanner.nextFloat());
+			System.out.print("  [습도 설정]: " + presetDTO.getOptimalHumidity() + " -> ");
+			presetDTO.setOptimalHumidity(scanner.nextFloat());
+			System.out.print("  [조도 설정]: " + presetDTO.getLightIntensity() + " -> ");
+			presetDTO.setLightIntensity(scanner.nextFloat());
+			System.out.print("  [CO2농도 설정]: " + presetDTO.getCo2Level() + " -> ");
+			presetDTO.setCo2Level(scanner.nextFloat());
+			System.out.print("  [토양 습도 설정]: " + presetDTO.getSoilMoisture() + " -> ");
+			presetDTO.setSoilMoisture(scanner.nextFloat());
+			System.out.println("  [예상 생장 기간(일)]: " + presetDTO.getGrowthPeriodDays());
+			System.out.println("\n--------------------------------------------------");
+			System.out.println("  엔터를 눌러주세요.");
+			scanner.nextLine();
+			scanner.nextLine();
 		} catch (InputMismatchException e) {
 			return null;
 		}
@@ -388,6 +413,7 @@ public class MainView {
 		System.out.println("\n  원하시는 메뉴를 선택해주세요.\n");
 		System.out.println("  [1] 센서 데이터 목록 보기 (최근 10개)");
 		System.out.println("  [2] 10시간 센서 데이터 보기");
+		System.out.println("  [3] 프리셋 수정");
 		System.out.println("  [B] 뒤로가기");
 		System.out.println("  [E] 프로그램 종료");
 		System.out.println("\n--------------------------------------------------");
