@@ -579,7 +579,7 @@ public class MainController {
 						avgLight[i] = 1200;
 					}
 				}
-				sensorDataService.makeGraph(avgLight, hours, presetDTO.getLightIntensity(), 200, "아날로그");
+				sensorDataService.makeGraph(avgLight, hours, presetDTO.getLightIntensity(), 10, "아날로그");
 				
 				if (farm.getFarmUid().charAt(0) == 'A') {
 					System.out.println("\n  [" + plantName + " 이산화탄소 농도 변화 그래프]\n");
@@ -589,7 +589,7 @@ public class MainController {
 				System.out.println("\n  [" + plantName + " 토양 수분 변화 그래프]\n");
 				
 				for (int i = 0; i < avgSoilMoisture.length; i++) {
-					if (avgSoilMoisture[i] >= 10555) {
+					if (avgSoilMoisture[i] >= 100555) {
 						avgSoilMoisture[i] = 100;
 					} else if (avgSoilMoisture[i] >= 95000) {
 						avgSoilMoisture[i] = 90;
@@ -613,8 +613,30 @@ public class MainController {
 						avgSoilMoisture[i] = 0;
 					}
 				}
+				if (presetDTO.getSoilMoisture() >= 100555) {
+					presetDTO.setSoilMoisture(0);
+				} else if (presetDTO.getSoilMoisture() >= 95000) {
+					presetDTO.setSoilMoisture(10);
+				} else if (presetDTO.getSoilMoisture() >= 84444) {
+					presetDTO.setSoilMoisture(20);
+				} else if (presetDTO.getSoilMoisture() >= 73888) {
+					presetDTO.setSoilMoisture(30);
+				} else if (presetDTO.getSoilMoisture() >= 63333) {
+					presetDTO.setSoilMoisture(40);
+				} else if (presetDTO.getSoilMoisture() >= 52777) {
+					presetDTO.setSoilMoisture(50);
+				} else if (presetDTO.getSoilMoisture() >= 42222) {
+					presetDTO.setSoilMoisture(60);
+				} else if (presetDTO.getSoilMoisture() >= 31666) {
+					presetDTO.setSoilMoisture(70);
+				} else if (presetDTO.getSoilMoisture() >= 21111) {
+					presetDTO.setSoilMoisture(80);
+				} else if (presetDTO.getSoilMoisture() >= 10555) {
+					presetDTO.setSoilMoisture(90);
+				} else {
+					presetDTO.setSoilMoisture(100);
+				}
 				sensorDataService.makeGraph(avgSoilMoisture, hours, presetDTO.getSoilMoisture(), 10, "%");
-				
 				
 				System.out.print("\n  계속하려면 Enter를 누르세요...");
 				scanner.nextLine();
@@ -626,6 +648,29 @@ public class MainController {
 				scanner.nextLine();
 				//break;
 			}
+		case "3":
+			view.showMessage("프리셋을 수정해주세요");
+			//String[] values = new String[4];
+			PresetDTO presetDTO = view.showUpdatePlantMenu(preset);
+			System.out.println(farm.getFarmUid());
+			System.out.println(presetDTO);
+            if (presetDTO == null) {
+            	view.showMessage("잘못된 값을 입력하셨습니다.");
+    			System.out.println("\n  엔터를 입력해주세요.");
+    			scanner.nextLine();
+            } else {
+            	plantService.updatePreset(farm.getFarmUid(), presetDTO);
+            	System.out.println("");
+            	plantService.selectPreset(presetDTO.getPresetUid());
+//                view.showMessage("기기 시리얼 넘버와 슬롯 번호를 설정해 주세요.");
+//                values = view.showPresetMenu(presetDTO);
+//                if (values[3].equals("1")) {
+//                	farmService.addFarm(values[0], values[1] + ":" + values[2]);
+//                	mqttManager.publishPresetUpdate(values[1] + ":" + values[2], preset);
+//                }
+            }
+//			mqttManager.publishPresetResponse(farm.getFarmUid(), presetDTO);
+			break;
 		case "B":
 			handleManagePlantMenu();
 			break;

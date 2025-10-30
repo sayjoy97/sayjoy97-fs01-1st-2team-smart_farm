@@ -62,6 +62,36 @@ public class PlantDAOImpl implements PlantDAO {
 		}
 		return presetDTO;
 	}
-
+	
+	public int updatePreset(String farmUid, PresetDTO presetDTO) {
+		String sql = "UPDATE plant_presets\n"
+				   + "SET optimal_temp = ?,\n"
+				   + "    optimal_humidity = ?,\n"
+				   + "    light_intensity = ?,\n"
+				   + "    co2_level = ?,\n"
+				   + "    soil_moisture = ?\n"
+//				   + "WHERE presetUid = (SELECT presetUid FROM farms WHERE farm_uid = ?)";
+		           + "WHERE preset_uid = ?";
+	    Connection con = null;
+	    PreparedStatement ptmt = null;
+	    int result = 0;
+	    try {
+			con = DBUtil.getConnect();
+			ptmt = con.prepareStatement(sql);
+			ptmt.setFloat(1, presetDTO.getOptimalTemp());
+			ptmt.setFloat(2, presetDTO.getOptimalHumidity());
+			ptmt.setFloat(3, presetDTO.getLightIntensity());
+			ptmt.setFloat(4, presetDTO.getCo2Level());
+			ptmt.setFloat(5, presetDTO.getSoilMoisture());
+			ptmt.setInt(6, presetDTO.getPresetUid());
+			result = ptmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		} finally {
+			DBUtil.close(null, ptmt, con);
+		}
+	    return result;
+	}
 
 }

@@ -15,4 +15,8 @@ public class PlantServiceImpl implements PlantService {
 		PresetDTO presetDTO = plantDAO.selectPreset(presetUid);
 		return presetDTO;
 	}
+	
+	public int updatePreset(String farmUid, PresetDTO presetDTO) {
+		return plantDAO.updatePreset(farmUid, presetDTO);
+	}
 }
